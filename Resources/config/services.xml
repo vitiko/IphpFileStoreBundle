@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <parameters>
+        <parameter key="iphp.filestore.namer.default.class">Iphp\FileStoreBundle\Naming\DefaultNamer</parameter>
+        <parameter key="iphp.filestore.directory_namer.default.class">Iphp\FileStoreBundle\Naming\DefaultDirectoryNamer</parameter>
+    </parameters>
+
+
+    <services>
+
+        <!-- widget for file upload with "delete uploaded file" feature -->
+        <service id="iphp.filestore.type.iphp_file" class="Iphp\FileStoreBundle\Form\Type\FileType">
+            <tag name="form.type" alias="iphp_file"/>
+        </service>
+
+
+        <!-- upload file namer -->
+        <service id="iphp.filestore.namer.default" class="%iphp.filestore.namer.default.class%"/>
+
+
+        <!-- upload file directory namer -->
+        <service id="iphp.filestore.directory_namer.default" class="%iphp.filestore.directory_namer.default.class%"/>
+
+        <service id="iphp.filestore.mapping.factory" class="Iphp\FileStoreBundle\Mapping\PropertyMappingFactory"
+                 public="false">
+            <argument type="service" id="service_container"/>
+            <argument type="service" id="iphp.filestore.annotation.driver"/>
+            <argument type="service" id="iphp.filestore.datastorage"/>
+            <argument>%iphp.filestore.mappings%</argument>
+        </service>
+
+        <!-- reading annotations from entity class file -->
+        <service id="iphp.filestore.annotation.driver" class="Iphp\FileStoreBundle\Driver\AnnotationDriver"
+                 public="false">
+            <argument type="service" id="annotation_reader"/>
+        </service>
+
+
+        <!-- storing file information (orm adapter), set in IphpFileStoreExtension -->
+        <service id="iphp.filestore.datastorage" class="%iphp.filestore.datastorage.class%" public="false"/>
+
+        <service id="iphp.filestore.filestorage.file_system" class="Iphp\FileStoreBundle\FileStorage\FileSystemStorage">
+            <argument>%iphp.web_dir%</argument>
+        </service>
+
+        <service id="iphp.filestore.event_listener.uploader" class="Iphp\FileStoreBundle\EventListener\UploaderListener"
+                 public="false">
+            <argument type="service" id="iphp.filestore.datastorage"/>
+            <argument type="service" id="iphp.filestore.filestorage.file_system"/>
+            <argument type="service" id="iphp.filestore.mapping.factory"/>
+        </service>
+    </services>
+
+</container>
