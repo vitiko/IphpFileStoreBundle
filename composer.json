@@ -21,7 +21,7 @@
         "twig/twig": "@stable",
         "doctrine/orm": "@stable",
         "doctrine/common": "@stable",
-        "doctrine/dbal": "@stable",
+        "doctrine/dbal": "@stable"
     },
 	
 	"autoload": {
