@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
 
         $root
             ->children()
-                ->scalarNode('db_driver')->isRequired()->end()
+                ->scalarNode('db_driver')->defaultValue('orm')->end()
 
                 ->arrayNode('mappings')
                     ->useAttributeAsKey('id')
