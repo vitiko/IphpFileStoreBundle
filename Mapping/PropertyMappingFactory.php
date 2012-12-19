@@ -154,6 +154,8 @@ class PropertyMappingFactory
         $mapping = new PropertyMapping($obj, $config, $this->container);
         $mapping->setProperty($class->getProperty($field->getPropertyName()));
         $mapping->setFileNameProperty($class->getProperty($field->getFileNameProperty()));
+
+
         $mapping->setMappingName($field->getMapping());
 
 

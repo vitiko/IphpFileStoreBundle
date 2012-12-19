@@ -39,11 +39,11 @@ class UploadableField
             throw new \InvalidArgumentException('The "mapping" attribute of UploadableField is required.');
         }
 
-        if (isset($options['fileNameProperty'])) {
+/*        if (isset($options['fileNameProperty'])) {
             $this->fileNameProperty = $options['fileNameProperty'];
         } else {
             throw new \InvalidArgumentException('The "fileNameProperty" attribute of UploadableField is required.');
-        }
+        }*/
     }
 
     /**
@@ -88,12 +88,12 @@ class UploadableField
 
     /**
      * Gets the file name property.
-     *
+     * By default using propertyName
      * @return string The file name property.
      */
     public function getFileNameProperty()
     {
-        return $this->fileNameProperty;
+        return $this->fileNameProperty ? $this->fileNameProperty : $this->propertyName ;
     }
 
     /**
