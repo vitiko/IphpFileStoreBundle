@@ -47,4 +47,20 @@ working you have to:
  
 * Define a basic configuration set
 * Annotate your Entities
+
+
+### Configuration
+
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       photo:
+           upload_dir:  %kernel.root_dir%/../web/photo
+           upload_path: /photo
+           directory_namer:
+               date:
+                  params: { field : date, depth : month }
+           namer: ~
+```
  
