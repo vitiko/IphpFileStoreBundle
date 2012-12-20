@@ -8,3 +8,32 @@ After the entity has been created and the file has been saved,  array with data 
 will be saved to according property. 
 The bundle provide different ways to naming uploaded files and directories.   
  
+## Installation
+
+### Get the bundle
+ 
+
+Add the following lines in your composer.json:
+
+```
+{
+    "require": {
+        "iphp/filestore-bundle":"dev-master" 
+    }
+}
+```
+
+### Initialize the bundle
+
+To start using the bundle, register the bundle in your application's kernel class:
+
+``` php
+// app/AppKernel.php
+public function registerBundles()
+{
+    $bundles = array(
+        // ...
+         new Iphp\FilestoreBundle\IphpFileStoreBundle(),
+    );
+)
+```
