@@ -1,12 +1,13 @@
 <?php
-/**
- * Created by Vitiko
- * Date: 08.08.12
- * Time: 16:13
- */
+
 namespace Iphp\FileStoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Iphp\FileStoreBundle\Mapping\PropertyMappingFactory;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Exception\CreationException;
@@ -21,16 +22,26 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Iphp\FileStoreBundle\Form\DataTransformer\FileDataTransformer;
 use Iphp\FileStoreBundle\Form\DataTransformer\FileDataViewTransformer;
 
+/**
+ * @author Vitiko <vitiko@mail.ru>
+ */
 class FileType extends AbstractType
 {
 
 
+    protected $mappingFactory;
+
+    public function __construct(PropertyMappingFactory $mappingFactory)
+    {
+        $this->mappingFactory = $mappingFactory;
+    }
+
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-         'read_only' => false,
-         'upload' => true,
-         'show_uploaded' => true
+            'read_only' => false,
+            'upload' => true,
+            'show_uploaded' => true
 
         ));
     }
@@ -42,19 +53,17 @@ class FileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        //Нельзя добавлять трансформер только для файла, т.к. для трансформирования файла
-        // нужно знать знасение delete checkbox
-
-        /*$builder->add($builder->create('file', 'file')->addModelTransformer(new FileDataTransformer()))
-                 ->add('delete', 'checkbox')->addModelTransformer(new FileDataTransformer());*/
+        $transformer = new FileDataTransformer();
+        $subscriber = new FileTypeBindSubscriber($this->mappingFactory, $transformer);
+        $builder->addEventSubscriber($subscriber);
 
 
-        $builder->add('file', 'file', array ( 'required' => false))
+        $builder->add('file', 'file', array('required' => false))
             ->add('delete', 'checkbox', array('label' => 'Удалить', 'required' => false))
-            ->addViewTransformer(new FileDataTransformer())
+            ->addViewTransformer($transformer);
 
         //for sonata admin
-            ->addViewTransformer(new FileDataViewTransformer());
+        //    ->addViewTransformer(new FileDataViewTransformer());
     }
 
     /**
@@ -73,3 +82,6 @@ class FileType extends AbstractType
         return 'iphp_file';
     }
 }
+
+
+

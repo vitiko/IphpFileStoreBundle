@@ -46,15 +46,13 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    public function   isSameFile(File $file, array $fileData)
+    public function   isSameFile(File $file, PropertyMapping $mapping, $fileName = null)
     {
-        return $file->getRealPath() == realpath($fileData['dir'] . '/' . $fileData['fileName']);
+        return $file->getRealPath() == realpath($mapping->resolveFileName($fileName));
     }
 
 
-
-
-    protected function copyFile ($source,  $directory, $name )
+    protected function copyFile($source, $directory, $name)
     {
         if (!is_dir($directory)) {
             if (false === @mkdir($directory, 0777, true)) {
@@ -64,7 +62,7 @@ class FileSystemStorage implements FileStorageInterface
             throw new FileException(sprintf('Unable to write in the "%s" directory', $directory));
         }
 
-        $target = $directory.DIRECTORY_SEPARATOR. basename($name);
+        $target = $directory . DIRECTORY_SEPARATOR . basename($name);
 
         if (!@copy($source, $target)) {
             $error = error_get_last();
@@ -86,98 +84,63 @@ class FileSystemStorage implements FileStorageInterface
         $mimeType = $this->getMimeType($file);
 
         //transform filename and directory name if namer exists in mapping definition
-        $fileName = $origName = $mapping->useFileNamer($originalName);
-        list ($directoryName, $path) = $mapping->useDirectoryNamer($fileName, $originalName);
+        list ($fileName, $webPath) = $mapping->prepareFileName($originalName, $this);
 
+
+        $fullFileName = $mapping->resolveFileName($fileName);
         //check if file already placed in needed position
-        if (!$this->isSameFile($file, array('dir' => $directoryName, 'fileName' => $fileName))) {
-            $try = 0;
-            while ($mapping->needResolveCollision() && file_exists($directoryName . '/' . $fileName)) {
-
-                if ($try > 15)
-                    throw new \Exception ("Can't resolve collision for file  " . $directoryName . '/' . $origName);
-
-                list ($directoryName, $path, $fileName) = $mapping->resolveFileCollision($origName,  $originalName, ++$try);
-            }
-
-            if ($file instanceof UploadedFile)  $file->move($directoryName, $fileName);
-            else  $this->copyFile ($file->getPathname(), $directoryName,$fileName);
-
+        if (!$this->isSameFile($file, $mapping, $fileName)) {
+            $fileInfo = pathinfo($fullFileName);
+            if ($file instanceof UploadedFile) $file->move($fileInfo['dirname'], $fileInfo['basename']);
+            else  $this->copyFile($file->getPathname(), $fileInfo['dirname'], $fileInfo['basename']);
         }
 
 
         $fileData = array(
             'fileName' => $fileName,
             'originalName' => $originalName,
-            'dir' => $directoryName,
             'mimeType' => $mimeType,
-            'size' => filesize($directoryName . '/' . $fileName),
-            'path' => $path
+            'size' => filesize($fullFileName),
+            'path' => $webPath
         );
 
 
+        // print_r ($fileData);
+        //  exit();
 
-       // print_r ($fileData);
-      //  exit();
-
-       if (!$fileData['path'])
-       $fileData['path'] = substr($fileData['dir'], strlen($this->webDir)) . '/' . urlencode($fileName);
-
-
-        // $fileData['url'] = $fileData['path'] . '/' . $fileData['fileName'];
+        if (!$fileData['path'])
+            $fileData['path'] = substr($fullFileName, strlen($this->webDir));
 
         if (in_array($fileData['mimeType'], array('image/png', 'image/jpeg', 'image/pjpeg'))
             && function_exists('getimagesize')
         ) {
-
-
-            list($width, $height, $type) = @getimagesize($fileData['dir'] . '/' . $fileData['fileName']);
-
+            list($width, $height, $type) = @getimagesize($fullFileName);
             $fileData = array_merge($fileData, array(
                 'width' => $width, 'height' => $height
             ));
         }
 
         return $fileData;
-        // exit();
-
-        // $mapping->getFileNameProperty()->setValue($obj, $name);
-
-
     }
 
 
-    public function removeFile(array $fileData)
+    public function removeFile(PropertyMapping $mapping, $fileName = null)
     {
+        $fullFileName = $mapping->resolveFileName($fileName);
 
-
-        //var_dump ($fileData);
-
-        @unlink($fileData['dir'] . '/' . $fileData['fileName']);
-        return !file_exists($fileData['dir'] . '/' . $fileData['fileName']);
-        //exit();
-    }
-
-
-    public function checkFileExists(array $fileData)
-    {
-        return file_exists($fileData['dir'] . '/' . $fileData['fileName']);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function removeByMapping(PropertyMapping $mapping)
-    {
-
-        if ($mapping->getDeleteOnRemove()) {
-            $fileData = $mapping->getFileDataPropertyValue();
-
-            if ($fileData && file_exists($fileData['dir'] . '/' . $fileData['fileName']))
-                @unlink($fileData['dir'] . '/' . $fileData['fileName']);
+        if ($fullFileName && file_exists($fullFileName)) {
+            @unlink($fullFileName);
+            return !file_exists($fullFileName);
         }
-
+        return null;
     }
+
+
+    public function fileExists(PropertyMapping $mapping, $fileName = null)
+    {
+        return file_exists($mapping->resolveFileName($fileName));
+    }
+
 
     /**
      * ������������ � UploaderHelper

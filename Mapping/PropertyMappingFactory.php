@@ -1,6 +1,5 @@
 <?php
-
-namespace Iphp\FileStoreBundle\Mapping;
+ namespace Iphp\FileStoreBundle\Mapping;
 
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
@@ -109,22 +108,6 @@ class PropertyMappingFactory
 
         return $this->createMapping($obj, $annot);
     }
-
-    /**
-     * Checks to see if the class is uploadable.
-     *
-     * @param  \ReflectionClass          $class The class.
-     * @throws \InvalidArgumentException
-     */
-/*    protected function checkUploadable(\ReflectionClass $class)
-    {
-        if (!$this->hasAnnotations($class)) {
-            throw new \InvalidArgumentException(
-                'The object is not uploadable.'
-                    );
-                }
-    }*/
-
 
     public function hasAnnotations(\ReflectionClass $class)
     {

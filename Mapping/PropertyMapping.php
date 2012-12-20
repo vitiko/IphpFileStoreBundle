@@ -3,6 +3,7 @@
 namespace Iphp\FileStoreBundle\Mapping;
 
 use Iphp\FileStoreBundle\Naming\NamerInterface;
+use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
 use Iphp\FileStoreBundle\Naming\DirectoryNamerInterface;
 
 use Symfony\Component\HttpFoundation\File\File;
@@ -75,6 +76,9 @@ class PropertyMapping
         $this->property->setAccessible(true);
     }
 
+
+
+
     /**
      * Gets the reflection property that represents the property
      * which holds the file name for the mapping.
@@ -112,6 +116,14 @@ class PropertyMapping
     {
         return isset($this->config['namer']) && $this->config['namer'];
     }
+
+
+
+    public function isStoreFullDir()
+    {
+        return isset($this->config['store_fulldir']) && $this->config['store_fulldir'];
+    }
+
 
     /**
      * Determines if the mapping has a custom directory namer configured.
@@ -154,31 +166,60 @@ class PropertyMapping
 
         }
 
-        return array(
-            $this->getUploadDir() . $path,
-            $this->getUploadPath() ? $this->getUploadPath() . $path . '/' . urlencode($fileName) : '');
+        return  $path;
+
+
+
     }
 
 
-    public function needResolveCollision()
+    public function needResolveCollision($fileName, FileStorageInterface $fileStorage)
     {
-        return !$this->isOverwriteDuplicates();
+        return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this, $fileName);
+
     }
 
 
+    /**
+     * @param $originalName
+     * @param \Iphp\FileStoreBundle\FileStorage\FileStorageInterface $fileStorage
+     * @return array relative or full fileName and file path at web
+     * @throws \Exception
+     */
+    public function prepareFileName($originalName, FileStorageInterface $fileStorage)
+    {
+        $fileName = $origName = $this->useFileNamer($originalName);
+        $dirName = $this->useDirectoryNamer($fileName, $originalName);
+
+        $try = 0;
+        while ($this->needResolveCollision($dirName.'/'.$fileName, $fileStorage)) {
+            if ($try > 15)
+                throw new \Exception ("Can't resolve collision for file  " . $fileName);
+
+            $fileName = $this->resolveFileCollision($origName, $originalName, ++$try);
+        }
+
+        return array (
+            ($this->isStoreFullDir() ? $this->getUploadDir() : '') .$dirName.'/'.$fileName,
+            $this->getUploadPath() ? $this->getUploadPath() . $dirName. '/' . urlencode($fileName) : '');
+    }
+
+
+    /**
+     * @param $fileName
+     * @param $clientOriginalName
+     * @param int $attempt
+     * @return string new file path
+     * @throws \Exception
+     */
     public function resolveFileCollision($fileName, $clientOriginalName, $attempt = 1)
     {
 
         if ($this->hasNamer()) {
             $firstNamer = current($this->config['namer']);
 
-            $newFileName = call_user_func(
+            return call_user_func(
                 array($this->container->get($firstNamer['service']), 'resolveCollision'), $fileName, $attempt);
-
-            //return dirName and path
-            $resolveData = $this->useDirectoryNamer($newFileName, $clientOriginalName);
-            $resolveData[] = $newFileName;
-            return $resolveData;
         }
 
         throw new \Exception ('Filename resolving collision not supported (namer is empty).Duplicate filename ' . $fileName);
@@ -311,4 +352,17 @@ class PropertyMapping
         return $this->obj;
     }
 
+
+
+    public function resolveFileName ($fileName = null)
+    {
+        if (!$fileName)
+        {
+            $fileData = $this->getFileDataPropertyValue();
+            if ($fileData) $fileName = $fileData['fileName'];
+        }
+        if (!$fileName) return null;
+
+        return ($this->isStoreFullDir() ? '' : $this->getUploadDir()). $fileName;
+    }
 }

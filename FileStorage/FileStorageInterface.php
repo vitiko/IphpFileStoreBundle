@@ -20,19 +20,18 @@ interface FileStorageInterface
      */
     public function upload(PropertyMapping $mapping, File $file);
 
+
     /**
-     * Removes the files associated with the object if configured to
-     * do so.
-     *
-     * @param object $obj The object.
+     * @abstract
+     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
+     * @param $fileName -   file name for this mapping
+     * @return mixed
      */
-    public function removeByMapping(PropertyMapping $mapping);
+    public function removeFile(PropertyMapping $mapping, $fileName = null);
 
-    public function removeFile(array $fileData);
+    public function fileExists(PropertyMapping $mapping, $fileName = null);
 
-    public function checkFileExists(array $fileData);
-
-    public function isSameFile (File $file, array $currentFileData);
+    public function isSameFile (File $file, PropertyMapping $mapping, $fileName = null);
 
     /**
      * Resolves the path for a file based on the specified object

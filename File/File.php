@@ -12,10 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class File extends UploadedFile
 {
-
-
     protected $deleted;
-
 
     static function createEmpty()
     {
@@ -27,8 +24,6 @@ class File extends UploadedFile
     {
        if ($path !== null)
            parent::__construct($path, $originalName, $mimeType,$size, $error, $test);
-
-
     }
 
 
@@ -42,5 +37,11 @@ class File extends UploadedFile
     public function isDeleted()
     {
         return $this->deleted;
+    }
+
+
+    function isValid()
+    {
+        return true;
     }
 }

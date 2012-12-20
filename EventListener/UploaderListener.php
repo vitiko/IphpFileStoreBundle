@@ -138,7 +138,6 @@ class UploaderListener implements EventSubscriber
             //Uploaded or setted file
             $file = $mapping->getFilePropertyValue();
 
-
             $currentFileData = $args->hasChangedField($mapping->getPropertyName()) ?
                 $args->getOldValue($mapping->getPropertyName()) : null;
 
@@ -147,13 +146,22 @@ class UploaderListener implements EventSubscriber
             if (is_null($file) || !($file instanceof File)) {
                 //Preserve old fileData if current file exists, else null
                 if ($currentFileData) $mapping->setFileDataPropertyValue(
-                    $this->fileStorage->checkFileExists($currentFileData) ? $currentFileData : null
+                    $this->fileStorage->fileExists( $mapping, $currentFileData['fileName']) ? $currentFileData : null
                 );
-            } else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
-                if ($this->fileStorage->removeFile($currentFileData)) $mapping->setFileDataPropertyValue(null);
+
+
+
+            }
+
+            //uploaded file has deleted status
+            else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
+                if ($this->fileStorage->removeFile($mapping, $currentFileData['fileName'])) $mapping->setFileDataPropertyValue(null);
             } else {
-                if ($currentFileData && !$this->fileStorage->isSameFile($file, $currentFileData))
-                    $this->fileStorage->removeFile($currentFileData);
+
+                //Old value (file) exits and uploaded new file
+                if ($currentFileData && !$this->fileStorage->isSameFile($file, $mapping, $currentFileData['fileName']))
+                    //before upload new file delete old file
+                    $this->fileStorage->removeFile($mapping, $currentFileData['fileName']);
 
                 $fileData = $this->fileStorage->upload($mapping, $file);
                 $mapping->setFileDataPropertyValue($fileData);
@@ -173,7 +181,7 @@ class UploaderListener implements EventSubscriber
         $mappings = $this->mappingFactory->fromEventArgs($args);
 
         foreach ($mappings as $mapping) {
-            $this->fileStorage->removeByMapping($mapping);
+            if ($mapping->getDeleteOnRemove()) $this->fileStorage->removeFile ($mapping);
         }
 
     }

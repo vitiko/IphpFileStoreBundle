@@ -16,6 +16,7 @@
         <!-- widget for file upload with "delete uploaded file" feature -->
         <service id="iphp.filestore.type.iphp_file" class="Iphp\FileStoreBundle\Form\Type\FileType">
             <tag name="form.type" alias="iphp_file"/>
+            <argument type="service" id="iphp.filestore.mapping.factory"/>
         </service>
 
 

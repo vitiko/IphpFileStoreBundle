@@ -38,12 +38,6 @@ class UploadableField
         } else {
             throw new \InvalidArgumentException('The "mapping" attribute of UploadableField is required.');
         }
-
-/*        if (isset($options['fileNameProperty'])) {
-            $this->fileNameProperty = $options['fileNameProperty'];
-        } else {
-            throw new \InvalidArgumentException('The "fileNameProperty" attribute of UploadableField is required.');
-        }*/
     }
 
     /**
