@@ -64,3 +64,116 @@ iphp_file_store:
            namer: ~
 ```
  
+ 
+### Annotate Entities
+
+In order for your entity  to work with the bundle, you need to add a
+few annotations to it. First, annotate your class with the `Uploadable` annotation.
+This lets the bundle know that it should look for files to upload in your class when
+it is saved, inject the files when it is loaded and check to see if it needs to
+remove files when it is removed. Next, you should annotate the fields which hold
+the instance of `Symfony\Component\HttpFoundation\File\UploadedFile` when the form
+is submitted with the `UploadableField` annotation. The `UploadableField` annotation
+has a few required options. They are as follows:
+
+- `mapping`: The mapping specified in the bundle configuration to use
+ 
+
+Lets look at an example using a fictional `Photo` ORM entity:
+
+``` php
+<?php
+#src/Iphpsandbox/PhotoBundle/Entity/Photo.php
+namespace Iphpsandbox\PhotoBundle\Entity;
+use Iphp\FileStoreBundle\Mapping\Annotation as FileStore;
+use Symfony\Component\Validator\Constraints as Assert;
+ 
+/**
+ * @FileStore\Uploadable
+ */
+class Photo
+{
+    /**
+     * @var integer
+     */
+    private $id;
+ 
+    /**
+     * @var string
+     */
+    private $title;
+ 
+ 
+    /**
+     * @var \Datetime
+     */
+    private $date;
+ 
+    /**
+     * @Assert\File( maxSize="20M")
+     * @FileStore\UploadableField(mapping="photo")
+     **/
+    private $photo;
+ 
+    /**
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+ 
+    /**
+     * @param string $title
+     * @return Photo
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+ 
+    /**
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+ 
+    /**
+     * @param array $photo
+     * @return Photo
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+        return $this;
+    }
+ 
+    /**
+     * @return array 
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+ 
+    /**
+     * @param \Datetime $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
+    }
+ 
+    /**
+     * @return \Datetime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+}
+```
