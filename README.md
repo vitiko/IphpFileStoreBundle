@@ -37,3 +37,14 @@ public function registerBundles()
     );
 )
 ```
+
+
+## Usage
+
+IphpFileStoreBundle try to handle file uploads according to a combination
+of configuration parameters and annotations. In order to have your upload
+working you have to:
+ 
+* Define a basic configuration set
+* Annotate your Entities
+ 
