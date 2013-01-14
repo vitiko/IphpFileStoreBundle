@@ -38,7 +38,7 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
     {
         $obj = $event->getForm()->getParent()->getData();
         $mapping = $this->mappingFactory->fromField($obj, $event->getForm()->getName());
-        $this->transformer->setMapping($mapping);
+        if ($mapping) $this->transformer->setMapping($mapping);
     }
 
 

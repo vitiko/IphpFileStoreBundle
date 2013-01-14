@@ -41,7 +41,7 @@ class FileDataTransformer implements DataTransformerInterface
      */
     public function reverseTransform($fileDataFromForm)
     {
-        if ($fileDataFromForm['delete']) {
+        if ($this->mapping && $fileDataFromForm['delete']) {
             $fullFileName = $this->mapping->resolveFileName($fileDataFromForm['fileName']);
             //File may no exists
             try {
