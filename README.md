@@ -74,8 +74,8 @@ All options are listed below:
 - `directory_namer`: configuration of directory naming  
 - `delete_on_remove`: Set to true if the file should be deleted from the
 filesystem when the entity is removed
-- `overwrite_duplicates`: Set to true if the file with same names will overwites. 
-  Otherwise used additional digits in file names
+- `overwrite_duplicates`: Set to true if the file with same name will be overwritten by a new file. 
+  In another case (by default), to the name of the new file will be added extra digits
  
  
  
