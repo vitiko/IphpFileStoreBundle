@@ -139,6 +139,38 @@ class Photo
 ```
 
 
+### Using form field type
+
+Form field type `iphp_file` can be used in admin class, created for SonataAdminBundle. 
+If entity already has uploaded file - information about this file will be displayed near file upload field. Also 
+delete checkbox allows to delete uploaded file
+
+``` php
+<?php
+#src/Iphpsandbox/PhotoBundle/Admin/PhotoAdmin.php
+namespace Iphpsandbox\PhotoBundle\Admin;
+ 
+use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Datagrid\ListMapper;
+ 
+class PhotoAdmin extends Admin
+{
+    protected function configureListFields(ListMapper $listMapper)
+    {
+        return $listMapper->addIdentifier('title')
+                          ->add ('date');
+    }
+ 
+    protected function configureFormFields(FormMapper $formMapper)
+    {
+        return $formMapper->add('title')
+                         ->add ('date')
+                         ->add('photo', 'iphp_file');
+    }
+}
+```
+
 
 ## Namers
 
