@@ -63,6 +63,20 @@ iphp_file_store:
                   params: { field : date, depth : month }
            namer: ~
 ```
+
+The `upload_dir` and `upload_path` is the only required configuration options for an entity mapping.
+
+All options are listed below:
+
+- `upload_dir`: directory to upload the file to
+- `upload_path`: web path to upload dir 
+- `namer`: configuration of file naming (See [Namers](#namers) section below)
+- `directory_namer`: configuration of directory naming  
+- `delete_on_remove`: Set to true if the file should be deleted from the
+filesystem when the entity is removed
+- `overwrite_duplicates`: Set to true if the file with same names will overwites. 
+  Otherwise used additional digits in file names
+ 
  
  
 ### Annotate Entities
