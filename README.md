@@ -8,6 +8,9 @@ After the entity has been created and the file has been saved,  array with data 
 will be saved to according property. 
 The bundle provide different ways to naming uploaded files and directories.   
  
+For Russian documentation see http://symfonydev.ru/iphpfilestorebundle/ 
+ 
+ 
 ## Installation
 
 ### Get the bundle
@@ -134,3 +137,20 @@ class Photo
     ...
 }
 ```
+
+
+
+## Namers
+
+The bundle uses namers to name the files and directories it saves to the filesystem. If no namer is
+configured for a mapping, the bundle will use default transliteration namer for files was uploaded. 
+if you would like to change this then you can use one of the provided namers or implement a custom one.
+
+### File Namers
+
+#### Use a provided file namer
+
+
+### Directory Namers
+
+#### Use a provided directory namer
