@@ -61,10 +61,6 @@ iphp_file_store:
        photo:
            upload_dir:  %kernel.root_dir%/../web/photo
            upload_path: /photo
-           directory_namer:
-               date:
-                  params: { field : date, depth : month }
-           namer: ~
 ```
 
 The `upload_dir` and `upload_path` is the only required configuration options for an entity mapping.
@@ -179,8 +175,90 @@ configured for a mapping, the bundle will use default transliteration namer for 
 if you would like to change this then you can use one of the provided namers or implement a custom one.
 
 ### File Namers
+ 
+ 
+#### Translit
 
-#### Use a provided file namer
+Transliteration - replace cyrillic and other chars to ascii
+
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+           ...
+           namer: ~ // default
+```
+
+
+To cancel transliteration
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+           ...
+           namer: false
+```
+
+#### Using entity field value
+
+File name by value of entity field ( field name - title)
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+          namer:
+             property:
+                params: { field : title }
+             translit: ~
+```
+
+#### Adding entity field value
+
+Adding to start  (propertyPrefix) or end (propertyPostfix) of file name value of entity field
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+          namer:
+             translit: ~
+             propertyPrefix:    #or propertyPostfix 
+                   params: { field : id, delimiter: "_" }
+```
+
+#### Using entity field name
+
+One mapping can be used in multiple fields. Name of the field can be used for naming file
+ 
+``` yaml 
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+          namer:
+             translit: ~
+             propertyPostfix:
+                  params: { use_field_name : true }
+```
+
+#### Replacing strings
+
+Params of replace namer are key-value pairs with search and replace strings
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+          namer:
+             translit: ~
+             propertyPostfix:
+                  params: { use_field_name : true }
+             replace:
+                 params: { File : ~ }
+```
 
 
 ### Directory Namers
