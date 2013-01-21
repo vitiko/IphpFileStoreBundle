@@ -217,7 +217,7 @@ iphp_file_store:
 
 #### Adding entity field value
 
-Adding to start  (propertyPrefix) or end (propertyPostfix) of file name value of entity field
+Adding to the beginnng  (propertyPrefix) or end (propertyPostfix) of file name value of entity field
 ``` yaml
 # app/config/config.yml
 iphp_file_store:
@@ -263,4 +263,66 @@ iphp_file_store:
 
 ### Directory Namers
 
-#### Use a provided directory namer
+#### Create subdirectory by date
+
+For example: Uploaded file 123.jpg, entity createdAt field value 2013-01-01 - path to file will be 2013/01/123.jpg.
+Depth options - year, month, date.
+
+``` yaml 
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+         directory_namer:
+             date:
+                 params: { field : createdAt, depth : month }
+```
+
+#### Using entity field value
+ 
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+         directory_namer:
+             property:
+                 params: { field : "id"}
+```
+
+#### Using entity field name
+ 
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+         directory_namer:
+             property:
+                params: { use_field_name : true }
+```
+
+#### Using entity class name
+``` yaml 
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+         directory_namer:
+             entityName: ~
+```
+
+#### Using chain of directory namers
+
+Using entity class name and entity field name
+
+``` yaml
+# app/config/config.yml
+iphp_file_store:
+    mappings:
+       some_entity:
+         directory_namer:
+             entityName: ~
+             property:
+                params: { use_field_name : true }
+```
