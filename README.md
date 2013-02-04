@@ -1,4 +1,4 @@
-IphpFileStoreBundle
+IphpFileStoreBundle - Symfony 2 file upload bundle
 ===================
 
 The IphpFileStoreBundle is a Symfony2 bundle that automates file uploads that are attached to an entity. 
