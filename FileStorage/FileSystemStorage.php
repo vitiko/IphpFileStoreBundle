@@ -26,10 +26,16 @@ class FileSystemStorage implements FileStorageInterface
      *
      * @param
      */
-    public function __construct($webDir)
+    public function __construct($webDir = null)
     {
         $this->webDir = $webDir;
     }
+
+    public function setWebDir($webDir )
+    {
+        $this->webDir = $webDir;
+    }
+
 
 
     protected function getOriginalName(File $file)
