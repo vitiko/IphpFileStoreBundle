@@ -46,7 +46,6 @@
         <service id="iphp.filestore.datastorage" class="%iphp.filestore.datastorage.class%" public="false"/>
 
         <service id="iphp.filestore.filestorage.file_system" class="Iphp\FileStoreBundle\FileStorage\FileSystemStorage">
-            <argument>%iphp.web_dir%</argument>
         </service>
 
         <service id="iphp.filestore.event_listener.uploader" class="Iphp\FileStoreBundle\EventListener\UploaderListener"
