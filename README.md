@@ -36,7 +36,7 @@ public function registerBundles()
 {
     $bundles = array(
         // ...
-         new Iphp\FilestoreBundle\IphpFileStoreBundle(),
+         new Iphp\FileStoreBundle\IphpFileStoreBundle(),
     );
 )
 ```
