@@ -135,6 +135,48 @@ class Photo
 ```
 
 
+
+## Uploaded file data
+ 
+### Annotated field data
+
+Аfter file upload annotated field contains array with elements:
+
+- path — full path to file in web dir, including web path to upload dir
+- size — file size in bytes
+- fileName — path to file , relative to web path to upload dir
+- originalName — original file name before upload
+- mimeType — file mime type
+
+
+If uploaded file im image, array also contains:
+ 
+- width — image width
+- height — image height
+
+
+### Using file data
+
+
+To get a path for the file you can use this PHP code:
+
+``` php
+// PHP 5.3
+$photo = ... // load entity from db
+ 
+$photoData = $photo->getPhoto(); //array with image data
+$path = $photoData['path'];
+ 
+//Or PHP 5.4.
+$path = $photo->getPhoto()['path'];
+```
+
+or in a Twig template:
+
+``` html
+<img src="{{ photo.photo.path }}" alt="{{ photo.title}}" />
+```
+
 ### Using form field type
 
 Form field type `iphp_file` can be used in admin class, created for SonataAdminBundle. 
