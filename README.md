@@ -68,7 +68,7 @@ The `upload_dir` and `upload_path` is the only required configuration options fo
 All options are listed below:
 
 - `upload_dir`: directory to upload the file to
-- `upload_path`: web path to upload dir 
+- `upload_path`: web path of upload dir 
 - `namer`: configuration of file naming (See [Namers](#namers) section below)
 - `directory_namer`: configuration of directory naming  
 - `delete_on_remove`: Set to true if the file should be deleted from the
@@ -144,7 +144,7 @@ class Photo
 
 - path — full path to file in web dir, including web path to upload dir
 - size — file size in bytes
-- fileName — path to file , relative to web path to upload dir
+- fileName — path to file , relative to web path of upload dir
 - originalName — original file name before upload
 - mimeType — file mime type
 
