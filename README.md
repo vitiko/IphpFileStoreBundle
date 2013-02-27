@@ -177,7 +177,7 @@ or in a Twig template:
 <img src="{{ photo.photo.path }}" alt="{{ photo.title}}" />
 ```
 
-### Using form field type
+## Using form field type
 
 Form field type `iphp_file` can be used in admin class, created for SonataAdminBundle. 
 If entity already has uploaded file - information about this file will be displayed near file upload field. Also 
