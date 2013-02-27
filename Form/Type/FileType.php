@@ -59,7 +59,7 @@ class FileType extends AbstractType
 
 
         $builder->add('file', 'file', array('required' => false))
-            ->add('delete', 'checkbox', array('label' => 'Удалить', 'required' => false))
+            ->add('delete', 'checkbox', array('required' => false))
             ->addViewTransformer($transformer);
 
         //for sonata admin
