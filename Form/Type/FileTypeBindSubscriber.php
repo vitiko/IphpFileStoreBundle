@@ -37,6 +37,14 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
     public function preBind(FormEvent $event)
     {
         $obj = $event->getForm()->getParent()->getData();
+
+
+
+
+
+        //For oneToMany at SonataAdmin
+        if (!$obj) return;
+
         $mapping = $this->mappingFactory->fromField($obj, $event->getForm()->getName());
         if ($mapping) $this->transformer->setMapping($mapping);
     }
