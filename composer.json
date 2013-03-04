@@ -13,7 +13,7 @@
     ],
 	
     "require": {
-        "symfony/symfony":"2.1.*"
+        "symfony/symfony":">=2.1.0"
     },
 	
 
