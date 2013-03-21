@@ -134,6 +134,26 @@ class Photo
 }
 ```
 
+### Doctrine configuration
+
+Field with file data must have type=array
+
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- src/Iphpsandbox/PhotoBundle/Ressources/config/doctrine/Photo.orm.xml -->
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Iphpsandbox\PhotoBundle\Entity\Photo">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="title" type="string" column="title" length="255"/>
+        <field name="date" type="datetime" column="date"/>
+        <field name="photo" type="array" column="photo"/>
+   </entity>
+</doctrine-mapping>
+```
 
 
 ## Uploaded file data
