@@ -148,22 +148,5 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    /**
-     * ������������ � UploaderHelper
-     * {@inheritDoc}
-     */
-    /*    public function resolvePath($obj, $field)
-    {
-        $mapping = $this->factory->fromField($obj, $field);
-        if (null === $mapping) {
-            throw new \InvalidArgumentException(sprintf(
-                'Unable to find uploadable field named: "%s"', $field
-            ));
-        }
 
-        return sprintf('%s/%s',
-            $mapping->getUploadDir($obj, $field),
-            $mapping->getFileNameProperty()->getValue($obj)
-        );
-    }*/
 }

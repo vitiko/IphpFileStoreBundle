@@ -8,6 +8,7 @@
     <parameters>
         <parameter key="iphp.filestore.namer.default.class">Iphp\FileStoreBundle\Naming\DefaultNamer</parameter>
         <parameter key="iphp.filestore.directory_namer.default.class">Iphp\FileStoreBundle\Naming\DefaultDirectoryNamer</parameter>
+        <parameter key="iphp.filestore.namer.invoker.class">Iphp\FileStoreBundle\Naming\NamerServiceInvoker</parameter>
     </parameters>
 
 
@@ -27,11 +28,17 @@
         <!-- upload file directory namer -->
         <service id="iphp.filestore.directory_namer.default" class="%iphp.filestore.directory_namer.default.class%"/>
 
-        <service id="iphp.filestore.mapping.factory" class="Iphp\FileStoreBundle\Mapping\PropertyMappingFactory"
+        <!--  namer  invoker-->
+        <service id="iphp.filestore.namer.invoker" class="%iphp.filestore.namer.invoker.class%"
                  public="false">
             <argument type="service" id="service_container"/>
+        </service>
+
+
+        <service id="iphp.filestore.mapping.factory" class="Iphp\FileStoreBundle\Mapping\PropertyMappingFactory"
+                 public="false">
+            <argument type="service" id="iphp.filestore.namer.invoker"/>
             <argument type="service" id="iphp.filestore.annotation.driver"/>
-            <argument type="service" id="iphp.filestore.datastorage"/>
             <argument>%iphp.filestore.mappings%</argument>
         </service>
 

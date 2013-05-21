@@ -30,7 +30,11 @@ class OrmDataStorage implements DataStorageInterface
     {
         $obj = $this->getObjectFromArgs($e);
 
+        /**
+         * var \Doctrine\ORM\EntityManager
+         */
         $em = $e->getEntityManager();
+
         $uow = $em->getUnitOfWork();
         $metadata = $em->getClassMetadata(get_class($obj));
         $uow->recomputeSingleEntityChangeSet($metadata, $obj);
@@ -47,4 +51,22 @@ class OrmDataStorage implements DataStorageInterface
 
         return new \ReflectionClass($obj);
     }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function postFlush($obj, EventArgs $args)
+    {
+        $args->getEntityManager()->persist($obj);
+        $args->getEntityManager()->flush();
+    }
+
+
+    public function currentFieldData($fieldName, EventArgs $args)
+    {
+        return $args->hasChangedField($fieldName) ? $args->getOldValue($fieldName) : null;
+    }
+
+
 }

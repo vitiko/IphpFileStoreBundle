@@ -19,12 +19,12 @@ class UploadableField
     /**
      * @var string $name
      */
-    protected $propertyName;
+    protected $fileUploadPropertyName;
 
     /**
      * @var string $fileNameProperty
      */
-    protected $fileNameProperty;
+    protected $fileDataPropertyName;
 
     /**
      * Constructs a new instance of UploadableField.
@@ -65,9 +65,9 @@ class UploadableField
      *
      * @return string The property name.
      */
-    public function getPropertyName()
+    public function getFileUploadPropertyName()
     {
-        return $this->propertyName;
+        return $this->fileUploadPropertyName;
     }
 
     /**
@@ -75,9 +75,9 @@ class UploadableField
      *
      * @param $propertyName The property name.
      */
-    public function setPropertyName($propertyName)
+    public function setFileUploadPropertyName($propertyName)
     {
-        $this->propertyName = $propertyName;
+        $this->fileUploadPropertyName = $propertyName;
     }
 
     /**
@@ -85,18 +85,18 @@ class UploadableField
      * By default using propertyName
      * @return string The file name property.
      */
-    public function getFileNameProperty()
+    public function getFileDataPropertyName()
     {
-        return $this->fileNameProperty ? $this->fileNameProperty : $this->propertyName ;
+        return $this->fileDataPropertyName ? $this->fileDataPropertyName : $this->fileUploadPropertyName ;
     }
 
     /**
-     * Sets the file name property.
+     * Sets the file data property name.
      *
      * @param $fileNameProperty The file name property.
      */
-    public function setFileNameProperty($fileNameProperty)
+    public function setFileDataPropertyName ($fileDataPropertyName)
     {
-        $this->fileNameProperty = $fileNameProperty;
+        $this->fileDataPropertyName = $fileDataPropertyName;
     }
 }

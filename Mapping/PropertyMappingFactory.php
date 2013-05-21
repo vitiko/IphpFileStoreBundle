@@ -1,15 +1,11 @@
 <?php
- namespace Iphp\FileStoreBundle\Mapping;
-
-
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\EventArgs;
+namespace Iphp\FileStoreBundle\Mapping;
 
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 use Iphp\FileStoreBundle\Driver\AnnotationDriver;
-use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
-use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Iphp\FileStoreBundle\Naming\NamerServiceInvoker;
+
+
 use Iphp\FileStoreBundle\Mapping\Annotation\UploadableField;
 
 /**
@@ -20,42 +16,35 @@ use Iphp\FileStoreBundle\Mapping\Annotation\UploadableField;
 class PropertyMappingFactory
 {
     /**
-     * @var ContainerInterface $container
+     * @var \Iphp\FileStoreBundle\Naming\NamerServiceInvoker $namerServiceInvoker
      */
-    protected $container;
+    protected $namerServiceInvoker;
 
     /**
-     * @var AnnotationDriver $driver
+     * @var \Iphp\FileStoreBundle\Driver\AnnotationDriver $driver
      */
     protected $driver;
 
-    /**
-     * @var \Iphp\FileStoreBundle\DataStorage\DataStorageInterface $dataStorage
-     */
-    protected $dataStorage;
 
     /**
-     * @var array $mappings
+     * @var array $mappingsConfig MappingConfiguration
      */
-    protected $mappings;
+    protected $mappingsConfig = array();
 
     /**
      * Constructs a new instance of PropertyMappingFactory.
      *
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container The container.
+     * @param \Iphp\FileStoreBundle\Naming\NamerServiceInvoker $namerServiceInvoker Object for invoke rename methods.
      * @param \Iphp\FileStoreBundle\Driver\AnnotationDriver              $driver    The driver.
-     * @param \Iphp\FileStoreBundle\DataStorage\DataStorageInterface             $dataStorage    dataStorage .
      * @param array                                                     $mappings  The configured mappings.
      */
-    public function __construct(ContainerInterface $container,
+    public function __construct(NamerServiceInvoker $namerServiceInvoker,
                                 AnnotationDriver $driver,
-                                DataStorageInterface $dataStorage,
-                                array $mappings)
+                                array $mappingsConfig)
     {
-        $this->container = $container;
+        $this->namerServiceInvoker = $namerServiceInvoker;
         $this->driver = $driver;
-        $this->dataStorage = $dataStorage;
-        $this->mappings = $mappings;
+        $this->mappingsConfig = $mappingsConfig;
     }
 
 
@@ -65,48 +54,41 @@ class PropertyMappingFactory
      * object.
      *
      * @param  object $obj The object.
+     * @param  \ReflectionClass      $class
      * @return  \Iphp\FileStoreBundle\Mapping\PropertyMapping[] objects.
      */
-    public function fromObject($obj)
+    public function getMappingsFromObject($obj, \ReflectionClass $class)
     {
-        $class = $this->dataStorage->getReflectionClass($obj);
         if (!$this->hasAnnotations($class)) return array();
 
         $mappings = array();
         foreach ($this->driver->readUploadableFields($class) as $field) {
-            $mappings[] = $this->createMapping($obj, $field);
+            $mappings[] = $this->createMapping($obj, $class, $field);
         }
 
         return $mappings;
     }
 
 
-    public function fromEventArgs(EventArgs $args)
-    {
-        $obj = $this->dataStorage->getObjectFromArgs($args);
-
-        return $this->fromObject($obj);
-    }
-
     /**
      * Creates a property mapping object which contains the
      * configuration for the specified uploadable field.
      *
      * @param  object               $obj   The object.
+     * @param  \ReflectionClass      $class
      * @param  string               $field The field.
      * @return null|\Iphp\FileStoreBundle\Mapping\PropertyMapping The property mapping.
      */
-    public function fromField($obj, $field)
+    public function getMappingFromField($obj, \ReflectionClass $class, $field)
     {
-        $class = $this->dataStorage->getReflectionClass($obj);
         if (!$this->hasAnnotations($class)) return null;
 
-        $annot = $this->driver->readUploadableField($class, $field);
-        if (null === $annot) {
-            return null;
-        }
+        $annotation = $this->driver->readUploadableField($class, $field);
 
-        return $this->createMapping($obj, $annot);
+
+        if (null === $annotation) return null;
+
+        return $this->createMapping($obj, $class, $annotation);
     }
 
     public function hasAnnotations(\ReflectionClass $class)
@@ -118,30 +100,31 @@ class PropertyMappingFactory
      * Creates the property mapping from the read annotation and configured mapping.
      *
      * @param  object                                          $obj   The object.
+     * @param  \ReflectionClass      $class
      * @param  \Iphp\FileStoreBundle\Mapping\Annotation\UploadableField $field The read annotation.
      * @return \Iphp\FileStoreBundle\Mapping\PropertyMapping     The property mapping.
      * @throws \InvalidArgumentException
      */
-    protected function createMapping($obj, UploadableField $field)
+    protected function createMapping($obj, \ReflectionClass $class, UploadableField $field)
     {
-        $class = $this->dataStorage->getReflectionClass($obj);
-
-        if (!array_key_exists($field->getMapping(), $this->mappings)) {
+        if (!array_key_exists($field->getMapping(), $this->mappingsConfig)) {
             throw new \InvalidArgumentException(sprintf(
                 'No mapping named "%s" configured.', $field->getMapping()
             ));
         }
 
-        $config = $this->mappings[$field->getMapping()];
+        $config = $this->mappingsConfig[$field->getMapping()];
 
-        $mapping = new PropertyMapping($obj, $config, $this->container);
-        $mapping->setProperty($class->getProperty($field->getPropertyName()));
-        $mapping->setFileNameProperty($class->getProperty($field->getFileNameProperty()));
-
+        $mapping = new PropertyMapping($obj, $config, $this->namerServiceInvoker);
+        $mapping->setFileUploadProperty($class->getProperty($field->getFileUploadPropertyName()));
+        $mapping->setFileDataProperty($class->getProperty($field->getFileDataPropertyName()));
 
         $mapping->setMappingName($field->getMapping());
 
 
         return $mapping;
     }
+
+
+
 }

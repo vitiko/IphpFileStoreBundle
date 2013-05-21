@@ -2,9 +2,9 @@
 
 namespace Iphp\FileStoreBundle\Mapping;
 
-use Iphp\FileStoreBundle\Naming\NamerInterface;
 use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
-use Iphp\FileStoreBundle\Naming\DirectoryNamerInterface;
+use Iphp\FileStoreBundle\Naming\NamerServiceInvoker;
+
 
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -26,19 +26,19 @@ class PropertyMapping
     protected $config;
 
     /**
-     * @var ContainerInterface $container
+     * @var \Iphp\FileStoreBundle\Naming\NamerServiceInvoker $namerServiceInvoker
      */
-    protected $container;
+    protected $namerServiceInvoker;
 
     /**
-     * @var \ReflectionProperty $property
+     * @var \ReflectionProperty $property reflection property that represents the annotated  property
      */
-    protected $property;
+    protected $fileUploadProperty;
 
     /**
-     * @var \ReflectionProperty $fileNameProperty
+     * @var \ReflectionProperty $fileNameProperty  reflection property that represents property which holds data
      */
-    protected $fileNameProperty;
+    protected $fileDataProperty;
 
     /**
      * @var string $mappingName
@@ -46,11 +46,11 @@ class PropertyMapping
     protected $mappingName;
 
 
-    function __construct($obj, $config, $container)
+    function __construct($obj, $config, NamerServiceInvoker $namerServiceInvoker)
     {
         $this->obj = $obj;
         $this->setConfig($config);
-        $this->container = $container;
+        $this->namerServiceInvoker = $namerServiceInvoker;
     }
 
     /**
@@ -70,38 +70,33 @@ class PropertyMapping
      *
      * @param \ReflectionProperty $property The reflection property.
      */
-    public function setProperty(\ReflectionProperty $property)
+    public function setFileUploadProperty(\ReflectionProperty $property)
     {
-        $this->property = $property;
-        $this->property->setAccessible(true);
+        $this->fileUploadProperty = $property;
+        $this->fileUploadProperty->setAccessible(true);
     }
 
 
-
-
     /**
-     * Gets the reflection property that represents the property
+     * Sets the reflection property that represents the property
      * which holds the file name for the mapping.
      *
-     * @return \ReflectionProperty The reflection property.
+     * @param \ReflectionProperty $fileNameProperty The reflection property.
      */
-    /*   public function getFileNameProperty()
+    public function setFileDataProperty(\ReflectionProperty $fileNameProperty)
     {
-        return $this->fileNameProperty;
-    }*/
+        $this->fileDataProperty = $fileNameProperty;
+        $this->fileDataProperty->setAccessible(true);
+    }
 
 
     public function useFileNamer($fileName)
     {
         if ($this->hasNamer()) {
             foreach ($this->config['namer'] as $method => $namer) {
-                $fileName = call_user_func(
-                    array($this->container->get($namer['service']), $method . 'Rename'),
-                    $this,
-                    $fileName,
+                $fileName = $this->namerServiceInvoker->rename($namer['service'], $method, $this, $fileName,
                     isset($namer['params']) ? $namer['params'] : array());
             }
-
         }
         return $fileName;
     }
@@ -116,7 +111,6 @@ class PropertyMapping
     {
         return isset($this->config['namer']) && $this->config['namer'];
     }
-
 
 
     public function isStoreFullDir()
@@ -142,9 +136,7 @@ class PropertyMapping
      */
     public function useDirectoryNamer($fileName, $clientOriginalName)
     {
-
         $path = '';
-
 
         if ($this->hasDirectoryNamer()) {
             foreach ($this->config['directory_namer'] as $method => $namer) {
@@ -153,11 +145,18 @@ class PropertyMapping
                     (isset($namer['params']['replace']) && $namer['params']['replace']);
 
 
-                $subPath = call_user_func(
-                    array($this->container->get($namer['service']), $method . 'Rename'),
+                $subPath = $this->namerServiceInvoker->rename($namer['service'],
+                    $method,
                     $this,
                     $replaceMode ? $path : $fileName,
                     isset($namer['params']) ? $namer['params'] : array());
+
+
+/*                $subPath = call_user_func(
+                    array($this->container->get($namer['service']), $method . 'Rename'),
+                    $this,
+                    $replaceMode ? $path : $fileName,
+                    isset($namer['params']) ? $namer['params'] : array());*/
 
 
                 if ($replaceMode) $path = $subPath;
@@ -166,17 +165,14 @@ class PropertyMapping
 
         }
 
-        return  $path;
-
-
-
+        return $path;
     }
 
 
     public function needResolveCollision($fileName, FileStorageInterface $fileStorage)
     {
+        //print "\n -->".$fileName;
         return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this, $fileName);
-
     }
 
 
@@ -192,16 +188,22 @@ class PropertyMapping
         $dirName = $this->useDirectoryNamer($fileName, $originalName);
 
         $try = 0;
-        while ($this->needResolveCollision($dirName.'/'.$fileName, $fileStorage)) {
+
+        //print "\nneed resolve ".     $dirName . '/' . $fileName .'?';
+
+        while ($this->needResolveCollision(  $dirName . '/' . $fileName , $fileStorage)) {
             if ($try > 15)
                 throw new \Exception ("Can't resolve collision for file  " . $fileName);
 
             $fileName = $this->resolveFileCollision($origName, $originalName, ++$try);
         }
 
-        return array (
-            ($this->isStoreFullDir() ? $this->getUploadDir() : '') .$dirName.'/'.$fileName,
-            $this->getUploadPath() ? $this->getUploadPath() . $dirName. '/' . urlencode($fileName) : '');
+
+        return array(
+            //file system  path
+            ($this->isStoreFullDir() ? $this->getUploadDir() : '') . $dirName . '/' . $fileName ,
+            //web path
+            $this->getUploadPath() ? $this->getUploadPath() . $dirName . '/' . urlencode($fileName) : '');
     }
 
 
@@ -218,8 +220,8 @@ class PropertyMapping
         if ($this->hasNamer()) {
             $firstNamer = current($this->config['namer']);
 
-            return call_user_func(
-                array($this->container->get($firstNamer['service']), 'resolveCollision'), $fileName, $attempt);
+
+           return $this->namerServiceInvoker->resolveCollision ($firstNamer['service'],  $fileName, $attempt);
         }
 
         throw new \Exception ('Filename resolving collision not supported (namer is empty).Duplicate filename ' . $fileName);
@@ -235,19 +237,6 @@ class PropertyMapping
     public function getUploadPath()
     {
         return $this->config['upload_path'];
-    }
-
-
-    /**
-     * Sets the reflection property that represents the property
-     * which holds the file name for the mapping.
-     *
-     * @param \ReflectionProperty $fileNameProperty The reflection property.
-     */
-    public function setFileNameProperty(\ReflectionProperty $fileNameProperty)
-    {
-        $this->fileNameProperty = $fileNameProperty;
-        $this->fileNameProperty->setAccessible(true);
     }
 
 
@@ -286,35 +275,35 @@ class PropertyMapping
      *
      * @return string The name.
      */
-    public function getPropertyName()
+    public function getFileUploadPropertyName()
     {
-        return $this->property->getName();
+        return $this->fileUploadProperty->getName();
     }
 
     /**
      * Gets the value of the annotated property.
      * @return \Symfony\Component\HttpFoundation\File\UploadedFile
      */
-    public function getFilePropertyValue()
+    public function getFileUploadPropertyValue()
     {
-        return $this->property->getValue($this->obj);
+        return $this->fileUploadProperty->getValue($this->obj);
     }
 
 
-    public function setFilePropertyValue($file)
+    public function setFileUploadPropertyValue($file)
     {
-        return $this->property->setValue($this->obj, $file);
+         $this->fileUploadProperty->setValue($this->obj, $file);
     }
 
     public function setFileDataPropertyValue($fileData)
     {
-        return $this->fileNameProperty->setValue($this->obj, $fileData);
+         $this->fileDataProperty->setValue($this->obj, $fileData);
     }
 
 
     public function getFileDataPropertyValue()
     {
-        return $this->fileNameProperty->getValue($this->obj);
+        return $this->fileDataProperty->getValue($this->obj);
     }
 
 
@@ -325,25 +314,28 @@ class PropertyMapping
      */
     public function getFileDataPropertyName()
     {
-        return $this->fileNameProperty->getName();
+        return $this->fileDataProperty->getName();
     }
 
 
     /**
      * Determines if the file should be deleted upon removal of the
-     * entity.
+     * entity. Default true
      *
      * @return bool True if delete on remove, false otherwise.
      */
     public function getDeleteOnRemove()
     {
-        return $this->config['delete_on_remove'];
+        return !isset($this->config['delete_on_remove']) || $this->config['delete_on_remove'];
     }
 
 
+    /**
+     * @return bool True if overwrite file duplicates, if false - using resolve collision
+     */
     public function isOverwriteDuplicates()
     {
-        return $this->config['overwrite_duplicates'];
+        return isset($this->config['overwrite_duplicates']) && $this->config['overwrite_duplicates'];
     }
 
 
@@ -353,16 +345,14 @@ class PropertyMapping
     }
 
 
-
-    public function resolveFileName ($fileName = null)
+    public function resolveFileName($fileName = null)
     {
-        if (!$fileName)
-        {
+        if (!$fileName) {
             $fileData = $this->getFileDataPropertyValue();
             if ($fileData) $fileName = $fileData['fileName'];
         }
         if (!$fileName) return null;
 
-        return ($this->isStoreFullDir() ? '' : $this->getUploadDir()). $fileName;
+        return ($this->isStoreFullDir() ? '' : $this->getUploadDir()) . $fileName;
     }
 }

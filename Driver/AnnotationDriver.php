@@ -48,9 +48,10 @@ class AnnotationDriver
         $fields = array();
 
         foreach ($class->getProperties() as $prop) {
+
             $field = $this->reader->getPropertyAnnotation($prop, 'Iphp\FileStoreBundle\Mapping\Annotation\UploadableField');
             if (null !== $field) {
-                $field->setPropertyName($prop->getName());
+                $field->setFileUploadPropertyName($prop->getName());
                 $fields[] = $field;
             }
         }
@@ -76,7 +77,7 @@ class AnnotationDriver
                 return null;
             }
 
-            $field->setPropertyName($prop->getName());
+            $field->setFileUploadPropertyName($prop->getName());
 
             return $field;
         } catch (\ReflectionException $e) {

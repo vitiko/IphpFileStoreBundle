@@ -1,10 +1,12 @@
 <?php
-/**
- * @author Vitiko <vitiko@mail.ru>
- */
+
 namespace Iphp\FileStoreBundle\Naming;
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 
+
+/**
+ * @author Vitiko <vitiko@mail.ru>
+ */
 class DefaultDirectoryNamer
 {
 

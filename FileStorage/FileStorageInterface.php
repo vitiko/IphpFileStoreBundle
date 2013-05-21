@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 interface FileStorageInterface
 {
+
+
     /**
      * Uploads the files in the uploadable fields of the
      * specified object according to the property configuration.

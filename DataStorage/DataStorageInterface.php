@@ -35,4 +35,10 @@ interface DataStorageInterface
      * @return \ReflectionClass The reflection class.
      */
     public function getReflectionClass($obj);
+
+
+    public function postFlush ($obj, EventArgs $args);
+
+
+    public function currentFieldData  ($fieldName, EventArgs $args);
 }

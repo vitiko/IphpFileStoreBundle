@@ -1,11 +1,12 @@
 <?php
-
-/**
- * @author Vitiko <vitiko@mail.ru>
- */
 namespace Iphp\FileStoreBundle\Naming;
+
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 
+/**
+ * DefaultNamer
+ * @author Vitiko <vitiko@mail.ru>
+ */
 class DefaultNamer
 {
 
@@ -121,7 +122,9 @@ class DefaultNamer
 
         $ppos = strrpos($name, '.');
 
-        return substr($name, 0, $ppos) . '_' . $addition . '' . substr($name, $ppos);
+        return ($ppos === false ? $name : substr($name, 0, $ppos))
+                . '_' . $addition . ''
+                . ($ppos === false  ? '' : substr($name, $ppos));
     }
 
 

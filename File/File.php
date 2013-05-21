@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class File extends UploadedFile
 {
-    protected $deleted;
+    protected $deleted = false;
 
     static function createEmpty()
     {
@@ -36,7 +36,7 @@ class File extends UploadedFile
 
     public function isDeleted()
     {
-        return $this->deleted;
+        return $this->deleted ? true : false;
     }
 
 
