@@ -5,7 +5,7 @@ $autoloadFiles = array ( __DIR__.'/../vendor/autoload.php', __DIR__.'/../../../.
 foreach ($autoloadFiles as $autoloadFile)
 {
     if (!is_file($autoloadFile)) continue;
- 
+
     require $autoloadFile;
     return;
 }
