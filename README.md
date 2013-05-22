@@ -1,6 +1,8 @@
 IphpFileStoreBundle - Symfony 2 file upload bundle
 ===================
 
+[![Build Status](https://api.travis-ci.org/vitiko/IphpFileStoreBundle.png?branch=master)](http://travis-ci.org/vitiko/IphpFileStoreBundle)
+
 The IphpFileStoreBundle is a Symfony2 bundle that automates file uploads that are attached to an entity. 
 The bundle will automatically name and save the uploaded file according to the configuration specified on a per property
 basis using a mix of configuration and annotations. 
