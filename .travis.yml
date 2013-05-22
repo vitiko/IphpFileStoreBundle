@@ -5,12 +5,13 @@ php:
   - 5.4
 
 env:
-    - SYMFONY_VERSION=2.1.*
-    - SYMFONY_VERSION=2.2.*
+    - SYMFONY_VERSION=2.1.* DOCTRINEBUNDLE_VERSION=1.1.*
+    - SYMFONY_VERSION=2.2.* DOCTRINEBUNDLE_VERSION=1.2.*
 
 before_script:
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar require symfony/framework-bundle:${SYMFONY_VERSION}
+    - php composer.phar require symfony/doctrine-bundle:${DOCTRINEBUNDLE_VERSION}
     - php composer.phar install --dev
 
 notifications:
