@@ -11,7 +11,7 @@ env:
 before_script:
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar require symfony/framework-bundle:${SYMFONY_VERSION}
-    - php composer.phar require doctrine/doctrine-bundle:${DOCTRINEORM_VERSION}
+    - php composer.phar require doctrine/orm:${DOCTRINEORM_VERSION}
     - php composer.phar install --dev
 
 notifications:
