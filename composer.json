@@ -1,11 +1,11 @@
 {
-    "name":"iphp/filestore-bundle",
-    "type":"bundle",
-    "description":"Bundle for upload files in symfony 2.1 project",
-    "keywords":["symfony"],
-    "homepage":"http://symfonydev.ru",
-    "license":"MIT",
-    "authors":[
+    "name": "iphp/filestore-bundle",
+    "type": "bundle",
+    "description": "Bundle for upload files in symfony 2.1 project",
+    "keywords": ["file upload", "sonata admin file upload", "upload", "symfony file upload"],
+    "homepage": "http://symfonydev.ru",
+    "license": "MIT",
+    "authors": [
         {
             "name":"Vitiko",
             "email":"vitiko@mail.ru"
