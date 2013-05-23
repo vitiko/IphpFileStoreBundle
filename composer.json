@@ -1,26 +1,32 @@
 {
-    "name": "iphp/filestore-bundle",
-    "type": "bundle",
-    "description": "Bundle for upload files in symfony 2.1 project",
-    "keywords": ["symfony"],
-    "homepage": "http://symfonydev.ru",
-    "license": "MIT",
-    "authors": [
+    "name":"iphp/filestore-bundle",
+    "type":"bundle",
+    "description":"Bundle for upload files in symfony 2.1 project",
+    "keywords":["symfony"],
+    "homepage":"http://symfonydev.ru",
+    "license":"MIT",
+    "authors":[
         {
-            "name": "Vitiko",
-            "email": "vitiko@mail.ru"
+            "name":"Vitiko",
+            "email":"vitiko@mail.ru"
         }
     ],
-	
-    "require": {
-        "symfony/symfony":">=2.1.0"
-    },
-	
 
-	
-	"autoload": {
-        "psr-0": { "Iphp\\FileStoreBundle": "" }
+    "require":{
+        "symfony/framework-bundle":">=2.1,<2.4-dev"
     },
-    "target-dir": "Iphp/FileStoreBundle"
-	
+
+    "require-dev":{
+
+        "doctrine/orm":"@stable",
+        "doctrine/common":"@stable"
+    },
+
+    "autoload":{
+        "psr-0":{
+            "Iphp\\FileStoreBundle":""
+        }
+    },
+    "target-dir":"Iphp/FileStoreBundle"
+
 }
