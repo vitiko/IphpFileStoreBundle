@@ -19,7 +19,8 @@
     "require-dev":{
 
         "doctrine/orm":"@stable",
-        "doctrine/common":"@stable"
+        "doctrine/common":"@stable",
+        "mikey179/vfsStream": "v1.2.0"
     },
 
     "autoload":{
