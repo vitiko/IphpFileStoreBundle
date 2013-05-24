@@ -21,6 +21,8 @@ class FileSystemStorage implements FileStorageInterface
 
     protected $webDir;
 
+    protected $sameFileChecker;
+
     /**
      * Constructs a new instance of FileSystemStorage.
      *
@@ -29,12 +31,31 @@ class FileSystemStorage implements FileStorageInterface
     public function __construct($webDir = null)
     {
         $this->webDir = $webDir;
+
+
+        // @codeCoverageIgnoreStart
+        $this->sameFileChecker = function (File $file, PropertyMapping $mapping, $fileName)
+        {
+            return $file->getRealPath() == realpath($mapping->resolveFileName($fileName));
+        };
+        // @codeCoverageIgnoreEnd
     }
 
     public function setWebDir($webDir )
     {
         $this->webDir = $webDir;
     }
+
+    public function getWebDir()
+    {
+        return $this->webDir;
+    }
+
+    public function setSameFileChecker (\Closure $checker)
+    {
+        $this->sameFileChecker = $checker;
+    }
+
 
 
 
@@ -54,20 +75,18 @@ class FileSystemStorage implements FileStorageInterface
 
     public function   isSameFile(File $file, PropertyMapping $mapping, $fileName = null)
     {
-        return $file->getRealPath() == realpath($mapping->resolveFileName($fileName));
+        return  call_user_func(
+            $this->sameFileChecker,
+            $file,
+            $mapping,
+            $fileName);
+
     }
 
 
     protected function copyFile($source, $directory, $name)
     {
-        if (!is_dir($directory)) {
-            if (false === @mkdir($directory, 0777, true)) {
-                throw new FileException(sprintf('Unable to create the "%s" directory', $directory));
-            }
-        } elseif (!is_writable($directory)) {
-            throw new FileException(sprintf('Unable to write in the "%s" directory', $directory));
-        }
-
+        $this->checkDirectory($directory);
         $target = $directory . DIRECTORY_SEPARATOR . basename($name);
 
         if (!@copy($source, $target)) {
@@ -79,6 +98,32 @@ class FileSystemStorage implements FileStorageInterface
 
         return new File($target);
     }
+
+
+
+
+
+
+
+    protected function checkDirectory ($directory)
+    {
+        if (!is_dir($directory)) {
+            if (false === @mkdir($directory, 0777, true)) {
+
+                // @codeCoverageIgnoreStart
+                throw new FileException(sprintf('Unable to create the "%s" directory', $directory));
+                // @codeCoverageIgnoreEnd
+            }
+        } elseif (!is_writable($directory)) {
+            // @codeCoverageIgnoreStart
+            throw new FileException(sprintf('Unable to write in the "%s" directory', $directory));
+            // @codeCoverageIgnoreEnd
+        }
+
+
+        return true;
+    }
+
 
     /**
      * {@inheritDoc}
@@ -94,10 +139,17 @@ class FileSystemStorage implements FileStorageInterface
 
 
         $fullFileName = $mapping->resolveFileName($fileName);
+
+
         //check if file already placed in needed position
         if (!$this->isSameFile($file, $mapping, $fileName)) {
             $fileInfo = pathinfo($fullFileName);
-            if ($file instanceof UploadedFile) $file->move($fileInfo['dirname'], $fileInfo['basename']);
+
+            if ($file instanceof UploadedFile)
+            {
+                $this->checkDirectory($fileInfo['dirname']);
+                $file->move($fileInfo['dirname'], $fileInfo['basename']);
+            }
             else  $this->copyFile($file->getPathname(), $fileInfo['dirname'], $fileInfo['basename']);
         }
 
@@ -146,6 +198,7 @@ class FileSystemStorage implements FileStorageInterface
     {
         return file_exists($mapping->resolveFileName($fileName));
     }
+
 
 
 
