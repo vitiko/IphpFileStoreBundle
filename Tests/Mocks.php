@@ -141,9 +141,22 @@ class Mocks
      *
      * @return \Symfony\Component\HttpFoundation\File\File The file.
      */
-    static function getFileMock (\PHPUnit_Framework_TestCase $testCase)
+    static function getFileMock(\PHPUnit_Framework_TestCase $testCase)
     {
         return $testCase->getMockBuilder('Symfony\Component\HttpFoundation\File\File')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+
+    /**
+     * Creates a mock of uploadedFile
+     *
+     * @return \Symfony\Component\HttpFoundation\File\UploadedFile uploaded file
+     */
+    static function getUploadedFileMock(\PHPUnit_Framework_TestCase $testCase)
+    {
+        return $testCase->getMockBuilder('Symfony\Component\HttpFoundation\File\UploadedFile')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -154,7 +167,7 @@ class Mocks
      *
      * @return \Iphp\FileStoreBundle\File\File The file.
      */
-    static function getIphpFileMock (\PHPUnit_Framework_TestCase $testCase)
+    static function getIphpFileMock(\PHPUnit_Framework_TestCase $testCase)
     {
         return $testCase->getMockBuilder('Iphp\FileStoreBundle\File\File')
             ->disableOriginalConstructor()
