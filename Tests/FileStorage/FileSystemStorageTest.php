@@ -54,11 +54,11 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
 
         ));
 
-
-
-        mkdir (vfsStream::url('site_root/web/images-readonly'),0700);
-        chown (vfsStream::url('site_root/web/images-readonly'), vfsStream::GROUP_USER_1);
-
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0)
+        {
+         mkdir (vfsStream::url('site_root/web/images-readonly'),0700);
+         chown (vfsStream::url('site_root/web/images-readonly'), vfsStream::GROUP_USER_1);
+        }
 
         $this->uploadedImageFile = vfsStream::url('site_root/uploaded/123.jpg');
         $this->targetImageFileExistingDir = vfsStream::url('site_root/web/images/123.jpg');
@@ -241,6 +241,14 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testUploadUploadedImageFileToExistingReadonlyDir()
     {
+
+        if (version_compare(PHP_VERSION, '5.4.0','<'))
+        {
+            $this->markTestSkipped('vfsStream and chown() works only in PHP 5.4+');
+            return;
+        }
+
+
         //test mode
         $uploadedFile = new \Symfony\Component\HttpFoundation\File\UploadedFile(
             $this->uploadedImageFile, '123.jpg', 'image/jpeg', null, null, true);
@@ -263,6 +271,14 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testUploadImageFileToExistingReadonlyDir()
     {
+
+        if (version_compare(PHP_VERSION, '5.4.0','<'))
+        {
+            $this->markTestSkipped('vfsStream and chown() works only in PHP 5.4+');
+            return;
+        }
+
+
         //test mode
         $uploadedFile = new File(
             $this->uploadedImageFile, '123.jpg', 'image/jpeg', null, null, true);
