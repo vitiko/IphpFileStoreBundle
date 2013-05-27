@@ -1,7 +1,8 @@
 <?php
-namespace Iphp\FileStoreBundle\Mapping;
+namespace Iphp\FileStoreBundle\Tests\Mapping;
 
 use Iphp\FileStoreBundle\Tests\DummyEntity;
+use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 use Iphp\FileStoreBundle\Tests\DummyEntitySeparateDataField;
 use Iphp\FileStoreBundle\Tests\Mocks;
 

@@ -23,6 +23,12 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
      */
     private $transformer;
 
+
+    /**
+     * @var \Iphp\FileStoreBundle\DataStorage\DataStorageInterface
+     */
+    private $dataStorage;
+
     public function __construct(PropertyMappingFactory $mappingFactory,
                                 DataStorageInterface $dataStorage,
                                 FileDataTransformer $transformer)
@@ -40,7 +46,9 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
 
     public function preBind(FormEvent $event)
     {
-        $obj = $event->getForm()->getParent()->getData();
+
+        $form = $event->getForm();
+        $obj = $form->getParent()->getData();
 
 
         //For oneToMany at SonataAdmin
@@ -48,7 +56,7 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
 
         $mapping =  $this->mappingFactory->getMappingFromField($obj,
             $this->dataStorage->getReflectionClass($obj),
-            $event->getForm()->getName());
+            $form->getName());
         if ($mapping) $this->transformer->setMapping($mapping);
     }
 

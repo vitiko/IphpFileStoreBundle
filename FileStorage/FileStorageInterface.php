@@ -31,17 +31,24 @@ interface FileStorageInterface
      */
     public function removeFile(PropertyMapping $mapping, $fileName = null);
 
-    public function fileExists(PropertyMapping $mapping, $fileName = null);
-
-    public function isSameFile (File $file, PropertyMapping $mapping, $fileName = null);
 
     /**
-     * Resolves the path for a file based on the specified object
-     * and field name.
-     *
-     * @param  object $obj   The object.
-     * @param  string $field The field.
-     * @return string The path.
+     * @abstract
+     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
+     * @param null $fileName
+     * @return mixed
      */
-    //public function resolvePath($obj, $field);
+    public function fileExists(PropertyMapping $mapping, $fileName = null);
+
+
+    /**
+     * @abstract
+     * @param \Symfony\Component\HttpFoundation\File\File $file
+     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
+     * @param null $fileName
+     * @return mixed
+     */
+    public function isSameFile (File $file, PropertyMapping $mapping, $fileName = null);
+
+
 }

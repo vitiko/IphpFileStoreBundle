@@ -3,6 +3,7 @@
 namespace Iphp\FileStoreBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -19,6 +20,16 @@ class FileDataTransformer implements DataTransformerInterface
      * @var \Iphp\FileStoreBundle\Mapping\PropertyMapping
      */
     protected $mapping;
+
+    /**
+     * @var \Iphp\FileStoreBundle\FileStorage\FileStorageInterface
+     */
+    protected $fileStorage;
+
+    function __construct(FileStorageInterface $fileStorage)
+    {
+        $this->fileStorage = $fileStorage;
+    }
 
 
     public function setMapping(PropertyMapping $mapping)
@@ -42,11 +53,11 @@ class FileDataTransformer implements DataTransformerInterface
     public function reverseTransform($fileDataFromForm)
     {
         if ($this->mapping && $fileDataFromForm['delete']) {
-            $fullFileName = $this->mapping->resolveFileName($fileDataFromForm['fileName']);
+
             //File may no exists
             try {
-                $file = new IphpFile ($fullFileName, 'Dummy');
-                return $file->delete();
+                $this->fileStorage->removeFile($this->mapping, $fileDataFromForm['fileName']);
+
             } catch (\Exception $e) {
             }
 

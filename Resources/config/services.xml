@@ -19,6 +19,7 @@
             <tag name="form.type" alias="iphp_file"/>
             <argument type="service" id="iphp.filestore.mapping.factory"/>
             <argument type="service" id="iphp.filestore.datastorage"/>
+            <argument type="service" id="iphp.filestore.filestorage.file_system"/>
         </service>
 
 

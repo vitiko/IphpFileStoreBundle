@@ -3,6 +3,7 @@
 namespace Iphp\FileStoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
 use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
 use Iphp\FileStoreBundle\Mapping\PropertyMappingFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -29,7 +30,9 @@ use Iphp\FileStoreBundle\Form\DataTransformer\FileDataViewTransformer;
 class FileType extends AbstractType
 {
 
-
+    /**
+     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory
+     */
     protected $mappingFactory;
 
     /**
@@ -37,11 +40,18 @@ class FileType extends AbstractType
      */
     protected  $dataStorage;
 
+    /**
+     * @var \Iphp\FileStoreBundle\FileStorage\FileStorageInterface
+     */
+    protected $fileStorage;
+
     public function __construct(PropertyMappingFactory $mappingFactory,
-                                DataStorageInterface $dataStorage)
+                                DataStorageInterface $dataStorage,
+                                FileStorageInterface $fileStorage)
     {
         $this->mappingFactory = $mappingFactory;
         $this->dataStorage = $dataStorage;
+        $this->fileStorage = $fileStorage;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -61,7 +71,7 @@ class FileType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $transformer = new FileDataTransformer();
+        $transformer = new FileDataTransformer($this->fileStorage);
         $subscriber = new FileTypeBindSubscriber($this->mappingFactory,$this->dataStorage,  $transformer);
         $builder->addEventSubscriber($subscriber);
 
