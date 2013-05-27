@@ -188,9 +188,7 @@ class PropertyMapping
         $dirName = $this->useDirectoryNamer($fileName, $originalName);
 
         $try = 0;
-
-        //print "\nneed resolve ".     $dirName . '/' . $fileName .'?';
-
+ 
         while ($this->needResolveCollision(  $dirName . '/' . $fileName , $fileStorage)) {
             if ($try > 15)
                 throw new \Exception ("Can't resolve collision for file  " . $fileName);

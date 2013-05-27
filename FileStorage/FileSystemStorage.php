@@ -120,7 +120,6 @@ class FileSystemStorage implements FileStorageInterface
             // @codeCoverageIgnoreEnd
         }
 
-
         return true;
     }
 
@@ -136,10 +135,7 @@ class FileSystemStorage implements FileStorageInterface
 
         //transform filename and directory name if namer exists in mapping definition
         list ($fileName, $webPath) = $mapping->prepareFileName($originalName, $this);
-
-
         $fullFileName = $mapping->resolveFileName($fileName);
-
 
         //check if file already placed in needed position
         if (!$this->isSameFile($file, $mapping, $fileName)) {
@@ -161,10 +157,6 @@ class FileSystemStorage implements FileStorageInterface
             'size' => filesize($fullFileName),
             'path' => $webPath
         );
-
-
-        // print_r ($fileData);
-        //  exit();
 
         if (!$fileData['path'])
             $fileData['path'] = substr($fullFileName, strlen($this->webDir));

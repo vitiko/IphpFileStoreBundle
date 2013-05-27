@@ -1,6 +1,7 @@
 <?php
 namespace Iphp\FileStoreBundle\Form\Type;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
 use Iphp\FileStoreBundle\Form\DataTransformer\FileDataTransformer;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -22,9 +23,12 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
      */
     private $transformer;
 
-    public function __construct(PropertyMappingFactory $mappingFactory,  FileDataTransformer $transformer)
+    public function __construct(PropertyMappingFactory $mappingFactory,
+                                DataStorageInterface $dataStorage,
+                                FileDataTransformer $transformer)
     {
         $this->mappingFactory = $mappingFactory;
+        $this->dataStorage = $dataStorage;
         $this->transformer = $transformer;
     }
 
@@ -39,13 +43,12 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
         $obj = $event->getForm()->getParent()->getData();
 
 
-
-
-
         //For oneToMany at SonataAdmin
         if (!$obj) return;
 
-        $mapping = $this->mappingFactory->fromField($obj, $event->getForm()->getName());
+        $mapping =  $this->mappingFactory->getMappingFromField($obj,
+            $this->dataStorage->getReflectionClass($obj),
+            $event->getForm()->getName());
         if ($mapping) $this->transformer->setMapping($mapping);
     }
 

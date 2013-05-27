@@ -74,7 +74,7 @@ class UploaderListener implements EventSubscriber
     public function hasDeferredPropertyMapping($obj, PropertyMapping $mapping)
     {
         return $this->hasDeferredObject($obj) &&
-               isset($this->deferredFiles [$obj][$mapping]) && $this->deferredFiles [$obj][$mapping];
+            isset($this->deferredFiles [$obj][$mapping]) && $this->deferredFiles [$obj][$mapping];
     }
 
 
@@ -117,10 +117,9 @@ class UploaderListener implements EventSubscriber
     public function prePersist(EventArgs $args)
     {
         $obj = $this->dataStorage->getObjectFromArgs($args);
-
         $mappings = $this->mappingFactory->getMappingsFromObject($obj, $this->dataStorage->getReflectionClass($obj));
-
         $curFiles = new \SplObjectStorage();
+
         foreach ($mappings as $mapping) {
             $file = $mapping->getFileUploadPropertyValue();
             if ($file instanceof File) $curFiles[$mapping] = $file;
@@ -149,9 +148,8 @@ class UploaderListener implements EventSubscriber
                 $mapping->setFileDataPropertyValue($fileData);
             }
 
-
-            $this->dataStorage->postFlush($obj, $args);
             unset($this->deferredFiles[$obj]);
+            $this->dataStorage->postFlush($obj, $args);
         }
     }
 
@@ -170,7 +168,7 @@ class UploaderListener implements EventSubscriber
             //Uploaded or setted file
             $file = $mapping->getFileUploadPropertyValue();
 
-            $currentFileData = $this->dataStorage->currentFieldData ($mapping->getFileDataPropertyName(), $args);
+            $currentFileData = $this->dataStorage->currentFieldData($mapping->getFileDataPropertyName(), $args);
 
 
             //If no new file
