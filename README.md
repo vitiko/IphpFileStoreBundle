@@ -136,9 +136,11 @@ class Photo
 }
 ```
 
+[Source code of Photo entity in test bundle](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Entity/Photo.php)
+
 ### Doctrine configuration
 
-Field with file data must have type=array
+Field with file data must have type=array. Example of xml doctrine configuration. Annotation configuration above.
 
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -199,6 +201,18 @@ or in a Twig template:
 <img src="{{ photo.photo.path }}" alt="{{ photo.title}}" />
 ```
 
+Example of using entities with uploadable can be seen in [controller](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Controller/DefaultController.php) 
+and twig template [for uploading](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/index.html.twig) 
+and [editing](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/edit.html.twig) entities. 
+
+
+###Example of interface with list of uploaded photos 
+
+![interface with list of uploaded photos](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/front-images-list.jpeg)
+
+
+
+
 ## Using form field type
 
 Form field type `iphp_file` can be used in admin class, created for SonataAdminBundle. 
@@ -230,6 +244,12 @@ class PhotoAdmin extends Admin
     }
 }
 ```
+
+
+###Example of sonata admin form for uploaded photo
+![Example of edit form for uploaded photo](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/sonata-admin-iphpfile.jpeg)
+
+
 
 
 ## Namers
