@@ -206,9 +206,11 @@ and twig template [for uploading](https://github.com/vitiko/IphpFileStoreBundle/
 and [editing](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/edit.html.twig) entities. 
 
 
-Example of interface with list of uploaded photos 
+###Example of interface with list of uploaded photos 
 
-![interface with list of uploaded photos](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Fixtures/images/front-images-list.jpeg)
+![interface with list of uploaded photos](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/front-images-list.jpeg)
+
+
 
 
 ## Using form field type
@@ -242,6 +244,12 @@ class PhotoAdmin extends Admin
     }
 }
 ```
+
+
+###Example of sonata admin form for uploaded photo
+![Example of edit form for uploaded photo](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/sonata-admin-iphpfile.jpeg)
+
+
 
 
 ## Namers
