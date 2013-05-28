@@ -40,13 +40,8 @@ class ImageEditTest extends BaseTestCase
             'height' => 531
         ));
 
+        $crawler = $client->request('GET', '/edit/' . $photo->getId() . '/');
 
-
-
-        $crawler = $client->request('GET', '/edit/'.$photo->getId().'/');
-
-
-        print $client->getResponse()->getContent();
         $this->assertSame($crawler->filter('input[id="form_title"][value="Second photo"]')->count(), 1);
         $this->assertSame($crawler->filter('option[value="2013"][selected="selected"]')->count(), 1);
         $this->assertSame($crawler->filter('option[value="4"][selected="selected"]')->count(), 1);
@@ -70,7 +65,5 @@ class ImageEditTest extends BaseTestCase
 
         $photo = $this->getEntityManager()->getRepository('TestBundle:Photo')->findOneById(1);
         $this->assertSame($photo->getPhoto(), null);
-
     }
-
 }
