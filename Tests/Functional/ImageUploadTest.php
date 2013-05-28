@@ -62,8 +62,8 @@ class ImageUploadTest extends BaseTestCase
             'mimeType' => 'application/octet-stream',
             'size' => $fileToUpload->getSize(),
             'path' => '/photo/2013/03/sonata-admin-iphpfile.jpeg',
-            'width' => 838,
-            'height' => 608
+            'width' => 671,
+            'height' => 487
         ));
     }
 
