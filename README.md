@@ -140,7 +140,7 @@ class Photo
 
 ### Doctrine configuration
 
-Field with file data must have type=array
+Field with file data must have type=array. Example of xml doctrine configuration. Annotation configuration above.
 
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -200,6 +200,12 @@ or in a Twig template:
 ``` html
 <img src="{{ photo.photo.path }}" alt="{{ photo.title}}" />
 ```
+
+Example of using entities with uploadable can be seen in [controller](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Controller/DefaultController.php) 
+and twig template [for uploading](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/index.html.twig) 
+and [editing](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/edit.html.twig) entities. 
+
+
 
 ## Using form field type
 
