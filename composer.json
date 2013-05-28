@@ -18,9 +18,20 @@
 
     "require-dev":{
 
-        "doctrine/orm":"@stable",
-        "doctrine/orm":"@stable",
-        "symfony/form":"@stable",
+
+        "symfony/class-loader": "*",
+        "symfony/twig-bundle": "*",
+        "symfony/finder": "*",
+        "symfony/browser-kit": "*",
+        "symfony/css-selector": "*",
+        "symfony/form": "*",
+        "symfony/validator": "*",
+        "symfony/process": "*",
+        "symfony/yaml": "*",
+        "sensio/framework-extra-bundle": "*",
+        "doctrine/doctrine-bundle": "*",
+        "doctrine/orm": "*",
+
         "mikey179/vfsStream": "v1.2.0"
     },
 

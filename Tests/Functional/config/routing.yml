@@ -1,0 +1,3 @@
+TestBundle:
+    pattern:      /
+    defaults:  { _controller: TestBundle:Default:index }

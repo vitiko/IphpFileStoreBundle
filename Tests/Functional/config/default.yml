@@ -1,0 +1,15 @@
+imports:
+    - { resource: framework.yml }
+    - { resource: doctrine.yml }
+    - { resource: twig.yml }
+
+
+iphp_file_store:
+    mappings:
+       photo:
+           upload_dir:  %kernel.cache_dir%/../web/photo
+           upload_path: /photo
+           directory_namer:
+              date:
+                 params: { field : date, depth : month }
+           namer: ~

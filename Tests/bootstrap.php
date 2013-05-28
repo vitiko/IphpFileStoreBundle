@@ -1,13 +1,13 @@
 <?php
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
-$autoloadFiles = array ( __DIR__.'/../vendor/autoload.php', __DIR__.'/../../../../../autoload.php');
+// Composer
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    $loader = require_once __DIR__ . '/../vendor/autoload.php';
 
-foreach ($autoloadFiles as $autoloadFile)
-{
-    if (!is_file($autoloadFile)) continue;
+    AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
-    require $autoloadFile;
-    return;
+    return $loader;
 }
 
-throw new \LogicException('Could not find autoload.php in vendor/. Did you run "composer install --dev"?');
+throw new \RuntimeException('Could not find vendor/autoload.php, make sure you ran composer.');

@@ -161,7 +161,11 @@ class FileSystemStorage implements FileStorageInterface
         if (!$fileData['path'])
             $fileData['path'] = substr($fullFileName, strlen($this->webDir));
 
-        if (in_array($fileData['mimeType'], array('image/png', 'image/jpeg', 'image/pjpeg'))
+
+        $ext = substr($originalName,strrpos ($originalName,'.')+1);
+
+        if ((in_array($fileData['mimeType'], array('image/png', 'image/jpeg', 'image/pjpeg')) ||
+            in_array ($ext,array ('jpeg','jpg','png')))
             && function_exists('getimagesize')
         ) {
             list($width, $height, $type) = @getimagesize($fullFileName);
