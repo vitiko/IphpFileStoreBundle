@@ -6,8 +6,12 @@ namespace Iphp\FileStoreBundle\Tests\Functional;
  * @author Vitiko <vitiko@mail.ru>
  */
 
+use Iphp\FileStoreBundle\Tests\Functional\TestBundle\Entity\Photo;
+
 class ImageUploadTest extends BaseTestCase
 {
+
+
     public function testImageUpload()
     {
         $client = $this->createClient();
@@ -24,15 +28,17 @@ class ImageUploadTest extends BaseTestCase
         //print_r ( $client->getProfile()->getCollector('db')->getQueries());
 
         $client->enableProfiler();
-        $fileToUpload =  new \Symfony\Component\HttpFoundation\File\UploadedFile(
-            __DIR__ . '/fitness.jpeg', 'fitness.jpeg', 'image/jpeg',  null, null, true);
-         $client->submit($crawler->selectButton('Upload')->form(), array(
+
+        $fileToUpload = new \Symfony\Component\HttpFoundation\File\UploadedFile(
+            __DIR__ . '/../Fixtures/images/sonata-admin-iphpfile.jpeg', 'sonata-admin-iphpfile.jpeg');
+
+        $client->submit($crawler->selectButton('Upload')->form(), array(
             'title' => 'Some title',
-            'photo' =>   $fileToUpload,
+            'photo' => $fileToUpload,
             'date[year]' => '2013',
             'date[month]' => '3',
             'date[day]' => '15'
-           ));
+        ));
 
 
         // print_r ( $client->getProfile()->getCollector('db')->getQueries());
@@ -44,20 +50,22 @@ class ImageUploadTest extends BaseTestCase
 
 
         $photos = $this->getEntityManager()->getRepository('TestBundle:Photo')->findAll();
-        $this->assertSame (sizeof($photos), 1);
+        $this->assertSame(sizeof($photos), 1);
         $photo = $photos[0];
-        $this->assertSame ($photo->getTitle(), 'Some title');
+        $this->assertSame($photo->getTitle(), 'Some title');
 
         //path to images dir and directory naming config in Tests/Functional/config/default.yml
-        $this->assertSame ($photo->getPhoto(), array (
+        $this->assertSame($photo->getPhoto(), array(
 
-          'fileName' => '/2013/03/fitness.jpeg',
-          'originalName' => 'fitness.jpeg',
-          'mimeType' => 'application/octet-stream',
-          'size' => $fileToUpload->getSize(),
-          'path' => '/photo/2013/03/fitness.jpeg',
-          'width' => 480,
-          'height' => 322
+            'fileName' => '/2013/03/sonata-admin-iphpfile.jpeg',
+            'originalName' => 'sonata-admin-iphpfile.jpeg',
+            'mimeType' => 'application/octet-stream',
+            'size' => $fileToUpload->getSize(),
+            'path' => '/photo/2013/03/sonata-admin-iphpfile.jpeg',
+            'width' => 838,
+            'height' => 608
         ));
     }
+
+
 }

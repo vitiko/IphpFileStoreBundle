@@ -1,0 +1,9 @@
+<h2>Edit photo</h2>
+
+<form action="{{ path('photo_edit', {'id': photo.id}) }}" enctype="multipart/form-data" method="post">
+
+    {{ form_widget(editForm) }}
+
+    <input type="submit" value="Save"/>
+</form>
+

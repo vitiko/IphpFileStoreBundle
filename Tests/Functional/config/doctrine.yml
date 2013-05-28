@@ -7,5 +7,5 @@ doctrine:
         entity_managers:
             default:
                 auto_mapping: true
-#services:
-#    em: "@doctrine.orm.entity_manager"
+services:
+    em: "@doctrine.orm.entity_manager"
