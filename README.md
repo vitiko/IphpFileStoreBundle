@@ -206,6 +206,10 @@ and twig template [for uploading](https://github.com/vitiko/IphpFileStoreBundle/
 and [editing](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Resources/views/Photo/edit.html.twig) entities. 
 
 
+Example of interface with list of uploaded photos 
+
+![interface with list of uploaded photos](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Fixtures/images/front-images-list.jpeg)
+
 
 ## Using form field type
 
