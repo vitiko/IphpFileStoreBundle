@@ -136,6 +136,8 @@ class Photo
 }
 ```
 
+[Source code of Photo entity in test bundle](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Entity/Photo.php)
+
 ### Doctrine configuration
 
 Field with file data must have type=array
