@@ -1,4 +1,4 @@
-IphpFileStoreBundle - Symfony 2 file upload bundle
+IphpFileStoreBundle - Symfony 2 Doctrine ORM file upload bundle 
 ===================
 
 [![Build Status](https://api.travis-ci.org/vitiko/IphpFileStoreBundle.png?branch=master)](http://travis-ci.org/vitiko/IphpFileStoreBundle)
