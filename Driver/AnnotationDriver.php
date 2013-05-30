@@ -16,6 +16,11 @@ class AnnotationDriver
      */
     protected $reader;
 
+
+    protected $uploadedClass = array();
+
+    protected $uploadedFields = array();
+
     /**
      * Constructs a new instance of AnnotationDriver.
      *
@@ -32,9 +37,30 @@ class AnnotationDriver
      * @param  \ReflectionClass                                $class The reflection class.
      * @return null|\Iphp\FileStoreBundle\Annotation\Uploadable The annotation.
      */
-    public function readUploadable(\ReflectionClass $class)
+    public function readUploadable(\ReflectionClass $class )
     {
-        return $this->reader->getClassAnnotation($class, 'Iphp\FileStoreBundle\Mapping\Annotation\Uploadable');
+        $baseClassName = $className= $class->getNamespaceName().'\\'.$class->getName();
+        do {
+            if (isset($this->uploadedClass[$className]))
+            {
+                if ($baseClassName != $className)
+                    $this->uploadedClass[$baseClassName ] = $this->uploadedClass[$className];
+                return $this->uploadedClass[$baseClassName];
+            }
+
+            $annotation = $this->reader->getClassAnnotation($class, 'Iphp\FileStoreBundle\Mapping\Annotation\Uploadable');
+            if ($annotation)
+            {
+                $this->uploadedClass[$baseClassName] = $annotation;
+                if ($baseClassName != $className) $this->uploadedClass[$className] = $annotation;
+
+                return $annotation;
+            }
+            $class = $class->getParentClass();
+            if ($class) $className= $class->getNamespaceName().'\\'.$class->getName();
+        } while ($class);
+
+        return $annotation;
     }
 
     /**
@@ -45,6 +71,8 @@ class AnnotationDriver
      */
     public function readUploadableFields(\ReflectionClass $class)
     {
+        if (isset($this->uploadedFields))
+
         $fields = array();
 
         foreach ($class->getProperties() as $prop) {

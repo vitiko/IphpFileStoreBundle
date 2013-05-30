@@ -13,3 +13,20 @@ iphp_file_store:
               date:
                  params: { field : date, depth : month }
            namer: ~
+
+
+       file:
+           upload_dir:  %kernel.cache_dir%/../web/file
+           upload_path: /file
+
+           #chain of directory namers
+           directory_namer:
+               entityName: ~
+               property:
+                   params: { use_field_name : true }
+               date:
+                   params: { field : date, depth : year }
+           namer:
+               #naming file by id
+               property: ~
+

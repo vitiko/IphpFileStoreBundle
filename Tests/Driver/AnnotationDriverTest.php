@@ -3,6 +3,7 @@
 namespace Iphp\FileStoreBundle\Tests\Driver;
 
 use Iphp\FileStoreBundle\Driver\AnnotationDriver;
+use Iphp\FileStoreBundle\Tests\ChildOfDummyEntity;
 use Iphp\FileStoreBundle\Tests\Mocks;
 use Iphp\FileStoreBundle\Mapping\Annotation\Uploadable;
 use Iphp\FileStoreBundle\Mapping\Annotation\UploadableField;
@@ -22,9 +23,8 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadUploadableAnnotation()
     {
-        $uploadable = $this->getMockBuilder('Iphp\FileStoreBundle\Mapping\Annotation\Uploadable')
-                      ->disableOriginalConstructor()
-                      ->getMock();
+        $uploadable = Mocks::getUploadableMock($this);
+
 
         $reader = $this->getMock('Doctrine\Common\Annotations\Reader');
         $reader
@@ -38,6 +38,38 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($uploadable, $annot);
     }
+
+
+    public function testReadUploadableAnnotationFromParent()
+    {
+        $uploadable = Mocks::getUploadableMock($this);
+        $reader = $this->getMock('Doctrine\Common\Annotations\Reader');
+
+
+        $reader
+            ->expects($this->any())
+            ->method('getClassAnnotation')
+            ->will($this->returnCallBack ( function() use ( $uploadable) {
+
+            $args = func_get_args();
+
+            if ('Iphp\\FileStoreBundle\\Tests\\ChildOfDummyEntity' === $args[0]->getName()) return null;
+            if ('Iphp\\FileStoreBundle\\Tests\\DummyEntity' === $args[0]->getName()) return $uploadable;
+
+        }));
+
+        $entity = new ChildOfDummyEntity();
+        $driver = new AnnotationDriver($reader);
+
+        $annot = $driver->readUploadable(new \ReflectionClass($entity));
+
+        $this->assertEquals($uploadable, $annot);
+
+    }
+
+
+
+
 
 
     /**
@@ -78,9 +110,10 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
         $reader
             ->expects($this->any())
             ->method('getPropertyAnnotation')
-            ->will($this->returnCallback(function() use ($uploadableField) {
+            ->will($this->returnCallback(function() use ($class, $uploadableField) {
             $args = func_get_args();
-            if ('file' === $args[0]->getName()) {
+
+            if ( $args[0]->class === $class->getName() && 'file' === $args[0]->getName()) {
                 return $uploadableField;
             }
 
@@ -92,6 +125,46 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, count($fields));
     }
+
+
+
+
+    public function testReadOneUploadableFieldFromParent()
+    {
+        $uploadableField = Mocks::getUploadableFieldMock($this);
+        $uploadableField
+            ->expects($this->once())
+            ->method('setFileUploadPropertyName')
+            ->with ('file');
+
+
+        $entity = new ChildOfDummyEntity();
+        $class = new \ReflectionClass($entity);
+
+
+
+
+
+        $reader = $this->getMock('Doctrine\Common\Annotations\Reader');
+        $reader
+            ->expects($this->any())
+            ->method('getPropertyAnnotation')
+            ->will($this->returnCallback(function() use (   $entity , $uploadableField) {
+            $args = func_get_args();
+            if (get_parent_class($entity) === $args[0]->class && 'file' === $args[0]->getName()) {
+                return $uploadableField;
+            }
+
+            return null;
+        }));
+
+
+        $driver = new AnnotationDriver($reader);
+        $fields = $driver->readUploadableFields($class);
+
+        $this->assertEquals(1, count($fields));
+    }
+
 
 
     /**
