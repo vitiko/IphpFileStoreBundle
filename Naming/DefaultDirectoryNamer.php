@@ -17,6 +17,9 @@ class DefaultDirectoryNamer
     function propertyRename(PropertyMapping $propertyMapping, $fileName, $params)
     {
 
+        if (isset($params['use_field_name']) && $params['use_field_name'])
+            return $propertyMapping->getFileDataPropertyName();
+
         $obj = $propertyMapping->getObj();
         $field = isset($params['field']) && $params['field'] ? $params['field'] : 'id';
 
@@ -37,18 +40,16 @@ class DefaultDirectoryNamer
     }
 
 
-
     function entityNameRename(PropertyMapping $propertyMapping, $fileName, $params)
     {
-        return implode ('',array_slice( explode ('\\',get_class ($propertyMapping->getObj())),-1));
+        return implode('', array_slice(explode('\\', get_class($propertyMapping->getObj())), -1));
     }
 
 
-    function replaceRename (PropertyMapping $propertyMapping, $name, $params)
+    function replaceRename(PropertyMapping $propertyMapping, $name, $params)
     {
-        return strtr ($name, $params);
+        return strtr($name, $params);
     }
-
 
 
     function dateRename(PropertyMapping $propertyMapping, $fileName, $params)
@@ -58,16 +59,16 @@ class DefaultDirectoryNamer
         $field = isset($params['field']) && $params['field'] ? $params['field'] : 'id';
         $depth = isset($params['depth']) && $params['depth'] ? strtolower($params['depth']) : 'day';
 
-        $date = $obj->{'get'.ucfirst($field)}();
-        $date = $date ?  $date->getTimestamp() : time();
+        $date = $obj->{'get' . ucfirst($field)}();
+        $date = $date ? $date->getTimestamp() : time();
 
         $tpl = "Y/m/d";
         if ($depth == 'month') $tpl = "Y/m";
         if ($depth == 'year') $tpl = "Y";
 
-        $dirName = date ($tpl,  $date );
+        $dirName = date($tpl, $date);
 
-        return  $dirName;
+        return $dirName;
     }
 
 

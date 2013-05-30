@@ -59,12 +59,7 @@ class DefaultNamer
      */
     function propertyRename(PropertyMapping $propertyMapping, $name, $params)
     {
-
-        $obj = $propertyMapping->getObj();
-
-        $field = isset($params['field']) && $params['field'] ? $params['field'] : 'id';
-        $fieldValue = $obj->{'get' . ucfirst($field)}();
-        if (!$fieldValue) $fieldValue = $obj->getId();
+        $fieldValue = $this->getFieldValueByParam($propertyMapping, $params);
         if ($fieldValue) $name = $fieldValue . substr($name, strrpos($name, '.'));
         return $name;
     }
