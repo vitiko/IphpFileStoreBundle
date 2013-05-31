@@ -27,22 +27,9 @@ class BaseTestCase extends WebTestCase
     }
     protected function setUp()
     {
+        $dir = AppKernel::getTestBaseDir().'/'.static::getTestEnvFromCalledClass();
         $fs = new Filesystem();
-        $finder = new \Symfony\Component\Finder\Finder();
-
-
-        $finder->name( static::getTestEnvFromCalledClass(). '*')->depth('< 1')
-            ->in(realpath(AppKernel::getTestBaseDir()));
-
-
-        foreach ($finder as $file) {
-
-          //print "  * ".$file->getRealpath();
-           $fs->remove($file->getRealpath());
-        }
-
-        //exit();
-
+        $fs->remove($dir);
     }
 
     protected function getKernel()
