@@ -10,15 +10,18 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class AppKernel extends Kernel
 {
-    private $config;
+    protected $config;
 
-    public function __construct($config)
+    protected $testEnv;
+
+    public function __construct($config, $testEnv = 'default')
     {
-        parent::__construct('test', true);
+        //separate generated container
+        parent::__construct($testEnv . '_' . substr(md5($config), 0, 3), true);
 
         $fs = new Filesystem();
         if (!$fs->isAbsolutePath($config)) {
-            $config = __DIR__.'/config/'.$config;
+            $config = __DIR__ . '/config/' . $config;
         }
 
         if (!file_exists($config)) {
@@ -26,6 +29,7 @@ class AppKernel extends Kernel
         }
 
         $this->config = $config;
+        $this->testEnv = $testEnv;
     }
 
     public function registerBundles()
@@ -37,7 +41,7 @@ class AppKernel extends Kernel
 
             new  \Iphp\FileStoreBundle\IphpFileStoreBundle(),
             new  \Iphp\FileStoreBundle\Tests\Functional\TestBundle\TestBundle(),
-
+            new  \Iphp\FileStoreBundle\Tests\Functional\TestXmlConfigBundle\TestXmlConfigBundle()
         );
     }
 
@@ -48,9 +52,53 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/IphpFileStoreTestBundle/app/cache';
+        return $this->getTestEnvDir() . '/app/cache/' . substr(md5($this->config), 0, 3) . '';
     }
 
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+    public static function getTestBaseDir()
+    {
+      return sys_get_temp_dir() . '/IphpFileStoreTestBundle';
+    }
+
+
+
+    public function getTestEnvDir()
+    {
+        return self::getTestBaseDir().'/'. $this->testEnv;
+    }
+
+
+    public function makeTestEnvDir()
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->getTestEnvDir());
+        $fs->mkdir($this->getTestEnvDir());
+    }
+
+
+    protected function getKernelParameters()
+    {
+
+
+        return array_merge(
+            parent::getKernelParameters(), array(
+                'kernel.test_env' => $this->testEnv,
+                'kernel.test_env_dir' => $this->getTestEnvDir(),
+
+            )
+        );
+    }
+
+    public function getTestEnv()
+    {
+        return $this->testEnv;
+    }
 
 
 }

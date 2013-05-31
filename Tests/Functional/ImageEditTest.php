@@ -10,7 +10,7 @@ use Iphp\FileStoreBundle\Tests\Functional\TestBundle\Entity\Photo;
 
 class ImageEditTest extends BaseTestCase
 {
-    public function testImagEdit()
+    public function testImageEdit()
     {
         $client = $this->createClient();
         $this->importDatabaseSchema();

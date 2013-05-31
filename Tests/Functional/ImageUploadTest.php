@@ -25,8 +25,6 @@ class ImageUploadTest extends BaseTestCase
         $this->assertSame($crawler->filter('div.photo')->count(), 0);
 
 
-        //print_r ( $client->getProfile()->getCollector('db')->getQueries());
-
         $client->enableProfiler();
 
         $fileToUpload = new \Symfony\Component\HttpFoundation\File\UploadedFile(
@@ -40,8 +38,6 @@ class ImageUploadTest extends BaseTestCase
             'date[day]' => '15'
         ));
 
-
-        // print_r ( $client->getProfile()->getCollector('db')->getQueries());
 
         $crawler = $client->followRedirect();
 

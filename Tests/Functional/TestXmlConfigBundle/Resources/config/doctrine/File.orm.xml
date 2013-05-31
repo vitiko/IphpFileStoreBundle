@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="Iphp\FileStoreBundle\Tests\Functional\TestXmlConfigBundle\Entity\File">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        <field name="title" type="string" column="title" length="255"/>
+        <field name="date" type="datetime" column="date"/>
+        <field name="file" type="array" column="file"/>
+    </entity>
+</doctrine-mapping>

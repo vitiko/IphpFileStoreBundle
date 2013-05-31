@@ -353,4 +353,12 @@ class PropertyMapping
 
         return ($this->isStoreFullDir() ? '' : $this->getUploadDir()) . $fileName;
     }
+
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 }

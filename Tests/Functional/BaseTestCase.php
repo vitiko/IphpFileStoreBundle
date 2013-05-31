@@ -9,27 +9,61 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class BaseTestCase extends WebTestCase
 {
+    protected $testCaseUniqId;
+
+
     static protected function createKernel(array $options = array())
     {
         return self::$kernel = new AppKernel(
-            isset($options['config']) ? $options['config'] : 'default.yml'
+            isset($options['config']) ? $options['config'] : 'default.yml', static::getTestEnvFromCalledClass()
         );
     }
 
+    static function getTestEnvFromCalledClass()
+    {
+        $class = explode('\\', get_called_class());
+        return end($class);
+
+    }
     protected function setUp()
     {
         $fs = new Filesystem();
-        $fs->remove(sys_get_temp_dir() . '/IphpFileStoreTestBundle/');
+        $finder = new \Symfony\Component\Finder\Finder();
+
+
+        $finder->name( static::getTestEnvFromCalledClass(). '*')->depth('< 1')
+            ->in(realpath(AppKernel::getTestBaseDir()));
+
+
+        foreach ($finder as $file) {
+
+          //print "  * ".$file->getRealpath();
+           $fs->remove($file->getRealpath());
+        }
+
+        //exit();
+
     }
 
+    protected function getKernel()
+    {
+        return self::$kernel;
+    }
+
+    protected function getContainer()
+    {
+        return $this->getKernel()->getContainer();
+    }
 
     protected function getEntityManager()
     {
-        return self::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        return $this->getContainer()->get('doctrine.orm.entity_manager');
     }
+
 
     protected final function importDatabaseSchema()
     {
+
         $em = $this->getEntityManager();
         $metadata = $em->getMetadataFactory()->getAllMetadata();
         if (!empty($metadata)) {

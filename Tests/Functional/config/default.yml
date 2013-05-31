@@ -2,12 +2,13 @@ imports:
     - { resource: framework.yml }
     - { resource: doctrine.yml }
     - { resource: twig.yml }
+    - { resource: database.php }
 
 
 iphp_file_store:
     mappings:
        photo:
-           upload_dir:  %kernel.cache_dir%/../web/photo
+           upload_dir:  %kernel.test_env_dir%/web/photo
            upload_path: /photo
            directory_namer:
               date:
@@ -16,7 +17,7 @@ iphp_file_store:
 
 
        file:
-           upload_dir:  %kernel.cache_dir%/../web/file
+           upload_dir:  %kernel.test_env_dir%/web/file
            upload_path: /file
 
            #chain of directory namers

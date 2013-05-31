@@ -1,6 +1,6 @@
 <?php
 
-namespace Iphp\FileStoreBundle\Tests\Functional\TestBundle\Entity;
+namespace Iphp\FileStoreBundle\Tests\Functional\TestXmlConfigBundle\Entity;
 
 use Iphp\FileStoreBundle\Mapping\Annotation as FileStore;
 use Symfony\Component\Validator\Constraints as Assert;
