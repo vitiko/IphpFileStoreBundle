@@ -183,34 +183,18 @@ class UploaderListener implements EventSubscriber
 
                         if ($this->fileStorage->fileExists($fileNameByWebDir))
                         {
-                           // print 111;
-
                             $file = new UploadedFile ($fileNameByWebDir,
                                                       $currentFileData['originalName'], $currentFileData['mimeType'],
                                                       null,  null, true);
                             $fileData = $this->fileStorage->upload($mapping, $file);
                             $mapping->setFileDataPropertyValue($fileData);
                         }
-                        else
-                        {
-                          //  print 222;
-                        }
 
-                      //  exit();
                     } //Preserve old fileData if current file exist
                     else $mapping->setFileDataPropertyValue($currentFileData);
 
                 }
-
-
-                /*            if ($currentFileName && !$this->fileStorage->fileExists($currentFileName))
-
-
-
-                                   /* if ($currentFileData) $mapping->setFileDataPropertyValue(
-                                    $this->fileStorage->fileExists($currentFileName) ? $currentFileData : null
-                                );
-                */
+ 
 
             } //uploaded file has deleted status
             else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
