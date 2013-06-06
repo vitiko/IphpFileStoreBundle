@@ -19,7 +19,6 @@ For Russian documentation see http://symfonydev.ru/iphpfilestorebundle/
  
 
 Add the following lines in your composer.json:
-
 ```
 {
     "require": {
