@@ -172,7 +172,7 @@ class PropertyMapping
     public function needResolveCollision($fileName, FileStorageInterface $fileStorage)
     {
         //print "\n -->".$fileName;
-        return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this, $fileName);
+        return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this->resolveFileName($fileName));
     }
 
 
@@ -186,10 +186,11 @@ class PropertyMapping
     {
         $fileName = $origName = $this->useFileNamer($originalName);
         $dirName = $this->useDirectoryNamer($fileName, $originalName);
+        if (substr($dirName,-1) != '/') $dirName.='/';
 
         $try = 0;
 
-        while ($this->needResolveCollision(  $dirName . '/' . $fileName , $fileStorage)) {
+        while ($this->needResolveCollision(  $dirName  . $fileName , $fileStorage)) {
             if ($try > 15)
                 throw new \Exception ("Can't resolve collision for file  " . $fileName);
 
@@ -199,9 +200,9 @@ class PropertyMapping
 
         return array(
             //file system  path
-            ($this->isStoreFullDir() ? $this->getUploadDir() : '') . $dirName . '/' . $fileName ,
+            ($this->isStoreFullDir() ? $this->getUploadDir() : '')  . $dirName. $fileName ,
             //web path
-            $this->getUploadPath() ? $this->getUploadPath() . $dirName . '/' . urlencode($fileName) : '');
+            $this->getUploadPath() ? $this->getUploadPath() . $dirName . urlencode($fileName) : '');
     }
 
 
@@ -351,7 +352,8 @@ class PropertyMapping
         }
         if (!$fileName) return null;
 
-        return ($this->isStoreFullDir() ? '' : $this->getUploadDir()) . $fileName;
+        $dir = $this->isStoreFullDir() ? '' : $this->getUploadDir();
+        return $dir . (substr($dir,-1) != '/'  &&  substr($fileName,0,1) != '/' ? '/' : ''). $fileName;
     }
 
     /**

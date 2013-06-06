@@ -73,8 +73,12 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
         $this->fileStorage
             ->expects($this->once())
             ->method('fileExists')
-            ->with($propertyMapping, '123')
+            ->with( '/www/web/images/123')
             ->will($this->returnValue(false));
+
+
+
+
 
 
         //by default overwriteDuplicates = false
@@ -106,7 +110,7 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
         $this->fileStorage
             ->expects($this->once())
             ->method('fileExists')
-            ->with($propertyMapping, '/ab-cd')
+            ->with('/www/web/images/ab-cd')
             ->will($this->returnValue(false));
 
 
@@ -151,7 +155,7 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
         {
             $args = func_get_args();
             $fileExistsCalls++;
-            return $args[1] == '/ab-cd' ? true : false;
+            return $args[0] == '/www/web/images/ab-cd' ? true : false;
         }));
 
 
@@ -216,7 +220,7 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('fileExists')
         //No translited
-            ->with($propertyMapping, '/ab cd')
+            ->with('/www/web/images/ab cd')
             ->will($this->returnValue(true));
 
 
@@ -265,7 +269,7 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
         $propertyMapping->setFileDataPropertyValue(array('fileName' => 123));
 
 
-        $this->assertSame ($propertyMapping->resolveFileName(), $propertyMapping->getUploadDir() . '123');
+        $this->assertSame ($propertyMapping->resolveFileName(), $propertyMapping->getUploadDir() . '/123');
 
     }
 }

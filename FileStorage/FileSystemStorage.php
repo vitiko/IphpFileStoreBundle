@@ -34,9 +34,9 @@ class FileSystemStorage implements FileStorageInterface
 
 
         // @codeCoverageIgnoreStart
-        $this->sameFileChecker = function (File $file, PropertyMapping $mapping, $fileName)
+        $this->sameFileChecker = function (File $file, $fullFileName)
         {
-            return $file->getRealPath() == realpath($mapping->resolveFileName($fileName));
+            return $file->getRealPath() == realpath($fullFileName);
         };
         // @codeCoverageIgnoreEnd
     }
@@ -73,13 +73,12 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    public function   isSameFile(File $file, PropertyMapping $mapping, $fileName = null)
+    public function   isSameFile (File $file,  $fullFileName)
     {
         return  call_user_func(
             $this->sameFileChecker,
             $file,
-            $mapping,
-            $fileName);
+            $fullFileName);
 
     }
 
@@ -138,7 +137,7 @@ class FileSystemStorage implements FileStorageInterface
         $fullFileName = $mapping->resolveFileName($fileName);
 
         //check if file already placed in needed position
-        if (!$this->isSameFile($file, $mapping, $fileName)) {
+        if (!$this->isSameFile($file, $fullFileName)) {
             $fileInfo = pathinfo($fullFileName);
 
             if ($file instanceof UploadedFile)
@@ -178,9 +177,11 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    public function removeFile(PropertyMapping $mapping, $fileName = null)
+    /**
+     *  {@inheritDoc}
+     */
+    public function removeFile($fullFileName)
     {
-        $fullFileName = $mapping->resolveFileName($fileName);
 
         if ($fullFileName && file_exists($fullFileName)) {
             @unlink($fullFileName);
@@ -190,10 +191,15 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    public function fileExists(PropertyMapping $mapping, $fileName = null)
+    /**
+     *  {@inheritDoc}
+     */
+    public function fileExists($fullFileName)
     {
-        return file_exists($mapping->resolveFileName($fileName));
+        return file_exists($fullFileName);
     }
+
+
 
 
 

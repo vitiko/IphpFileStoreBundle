@@ -25,30 +25,27 @@ interface FileStorageInterface
 
     /**
      * @abstract
-     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
-     * @param $fileName -   file name for this mapping
-     * @return mixed
+     * @param $fullFileName
+     * @return boolean
      */
-    public function removeFile(PropertyMapping $mapping, $fileName = null);
+    public function removeFile($fullFileName);
 
 
     /**
      * @abstract
-     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
-     * @param null $fileName
-     * @return mixed
+     * @param $fullFileName
+     * @return boolean
      */
-    public function fileExists(PropertyMapping $mapping, $fileName = null);
+    public function fileExists($fullFileName);
 
 
     /**
      * @abstract
      * @param \Symfony\Component\HttpFoundation\File\File $file
-     * @param \Iphp\FileStoreBundle\Mapping\PropertyMapping $mapping
-     * @param null $fileName
-     * @return mixed
+     * @param $fullFileName
+     * @return boolean
      */
-    public function isSameFile (File $file, PropertyMapping $mapping, $fileName = null);
+    public function isSameFile (File $file, $fullFileName);
 
 
 }

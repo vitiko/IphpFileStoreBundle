@@ -87,30 +87,28 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testFileExists()
     {
-        $propertyMapping = $this->createPropertyMapping('123.jpg', $this->uploadedImageFile);
-        $this->assertTrue($this->storage->fileExists($propertyMapping, '123.jpg'));
+
+        $this->assertTrue($this->storage->fileExists( $this->uploadedImageFile));
 
     }
 
 
     public function testFileNoExists()
     {
-        $propertyMapping = $this->createPropertyMapping('exists/123.jpg', $this->targetImageFileExistingDir);
-        $this->assertFalse($this->storage->fileExists($propertyMapping, 'exists/123.jpg'));
+        $this->assertFalse($this->storage->fileExists($this->targetImageFileExistingDir));
     }
 
 
     public function testRemoveExistingFile()
     {
-        $propertyMapping = $this->createPropertyMapping('123.jpg', $this->uploadedImageFile);
-        $this->assertTrue($this->storage->removeFile($propertyMapping, '123.jpg'));
+        $this->assertTrue($this->storage->removeFile($this->uploadedImageFile));
     }
 
 
     public function testRemoveNonExistingFile()
     {
-        $propertyMapping = $this->createPropertyMapping('123.jpg', $this->targetImageFileExistingDir);
-        $this->assertNull($this->storage->removeFile($propertyMapping, '123.jpg'));
+
+        $this->assertNull($this->storage->removeFile($this->targetImageFileExistingDir));
     }
 
 

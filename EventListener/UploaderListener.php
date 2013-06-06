@@ -4,6 +4,7 @@ namespace Iphp\FileStoreBundle\EventListener;
 
 
 use Doctrine\Common\EventSubscriber;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\Common\EventArgs;
 
 use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
@@ -169,25 +170,57 @@ class UploaderListener implements EventSubscriber
             $file = $mapping->getFileUploadPropertyValue();
 
             $currentFileData = $this->dataStorage->currentFieldData($mapping->getFileDataPropertyName(), $args);
+            $currentFileName = $currentFileData ? $mapping->resolveFileName($currentFileData['fileName']) : null;
 
 
             //If no new file
             if (is_null($file) || !($file instanceof File)) {
-                //Preserve old fileData if current file exists, else null
-                if ($currentFileData) $mapping->setFileDataPropertyValue(
-                    $this->fileStorage->fileExists($mapping, $currentFileData['fileName']) ? $currentFileData : null
-                );
 
+                if ($currentFileData) {
+                    if (!$this->fileStorage->fileExists($currentFileName)) {
+
+                        $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'].$currentFileData['path'];
+
+                        if ($this->fileStorage->fileExists($fileNameByWebDir))
+                        {
+                           // print 111;
+
+                            $file = new UploadedFile ($fileNameByWebDir,
+                                                      $currentFileData['originalName'], $currentFileData['mimeType'],
+                                                      null,  null, true);
+                            $fileData = $this->fileStorage->upload($mapping, $file);
+                            $mapping->setFileDataPropertyValue($fileData);
+                        }
+                        else
+                        {
+                          //  print 222;
+                        }
+
+                      //  exit();
+                    } //Preserve old fileData if current file exist
+                    else $mapping->setFileDataPropertyValue($currentFileData);
+
+                }
+
+
+                /*            if ($currentFileName && !$this->fileStorage->fileExists($currentFileName))
+
+
+
+                                   /* if ($currentFileData) $mapping->setFileDataPropertyValue(
+                                    $this->fileStorage->fileExists($currentFileName) ? $currentFileData : null
+                                );
+                */
 
             } //uploaded file has deleted status
             else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
-                if ($this->fileStorage->removeFile($mapping, $currentFileData['fileName'])) $mapping->setFileDataPropertyValue(null);
+                if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
             } else {
 
                 //Old value (file) exits and uploaded new file
-                if ($currentFileData && !$this->fileStorage->isSameFile($file, $mapping, $currentFileData['fileName']))
+                if ($currentFileData && !$this->fileStorage->isSameFile($file, $currentFileName))
                     //before upload new file delete old file
-                    $this->fileStorage->removeFile($mapping, $currentFileData['fileName']);
+                    $this->fileStorage->removeFile($currentFileName);
 
                 $fileData = $this->fileStorage->upload($mapping, $file);
                 $mapping->setFileDataPropertyValue($fileData);
@@ -207,7 +240,7 @@ class UploaderListener implements EventSubscriber
         $mappings = $this->getMappingsFromArgs($args);
 
         foreach ($mappings as $mapping) {
-            if ($mapping->getDeleteOnRemove()) $this->fileStorage->removeFile($mapping);
+            if ($mapping->getDeleteOnRemove()) $this->fileStorage->removeFile($mapping->resolveFileName());
         }
 
     }

@@ -236,8 +236,15 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
         $this->fileStorage
             ->expects($this->once())
             ->method('fileExists')
-            ->with($propertyMapping, 'CURRENT_NAME')
+            ->with('/LOCATION/OF/CURRENT_NAME')
             ->will($this->returnValue(true));
+
+        $propertyMapping
+            ->expects($this->once())
+            ->method('resolveFileName')
+            ->with('CURRENT_NAME')
+            ->will($this->returnValue('/LOCATION/OF/CURRENT_NAME'));
+
 
         $propertyMapping
             ->expects($this->once())
@@ -311,17 +318,23 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
             ->with($propertyMapping, $file)
             ->will($this->returnValue(array('fileName' => 'NEW_NAME')));
 
+        $propertyMapping
+            ->expects($this->once())
+            ->method('resolveFileName')
+            ->with('CURRENT_NAME')
+            ->will($this->returnValue('/LOCATION/OF/CURRENT_NAME'));
+
 
         $this->fileStorage
             ->expects($this->once())
             ->method('isSameFile')
-            ->with($file, $propertyMapping, 'CURRENT_NAME')
+            ->with($file,   '/LOCATION/OF/CURRENT_NAME')
             ->will($this->returnValue(false));
 
         $this->fileStorage
             ->expects($this->once())
             ->method('removeFile')
-            ->with($propertyMapping, 'CURRENT_NAME');
+            ->with('/LOCATION/OF/CURRENT_NAME');
 
 
         $propertyMapping
@@ -352,6 +365,13 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->setDataStorageObjectMapping($obj, $propertyMapping);
 
+
+        $propertyMapping
+            ->expects($this->once())
+            ->method('resolveFileName')
+            ->with('CURRENT_NAME')
+            ->will($this->returnValue('/LOCATION/OF/CURRENT_NAME'));
+
         $this->fileStorage
             ->expects($this->once())
             ->method('upload')
@@ -362,7 +382,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
         $this->fileStorage
             ->expects($this->once())
             ->method('isSameFile')
-            ->with($file, $propertyMapping, 'CURRENT_NAME')
+            ->with($file, '/LOCATION/OF/CURRENT_NAME')
             ->will($this->returnValue(true));
 
         $this->fileStorage
@@ -400,10 +420,19 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->setDataStorageObjectMapping($obj, $propertyMapping);
 
+
+        $propertyMapping
+            ->expects($this->once())
+            ->method('resolveFileName')
+            ->with('CURRENT_NAME')
+            ->will($this->returnValue('/LOCATION/OF/CURRENT_NAME'));
+
+
+
         $this->fileStorage
             ->expects($this->once())
             ->method('removeFile')
-            ->with($propertyMapping, 'CURRENT_NAME')
+            ->with('/LOCATION/OF/CURRENT_NAME')
             ->will($this->returnValue(true));
 
         $propertyMapping
@@ -484,9 +513,19 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
 
+
+        $propertyMapping
+            ->expects($this->once())
+            ->method('resolveFileName')
+
+            ->will($this->returnValue('/LOCATION/OF/CURRENT_NAME'));
+
+
+
+
         $this->fileStorage->expects($this->once())
             ->method('removeFile')
-            ->with($propertyMapping);
+            ->with('/LOCATION/OF/CURRENT_NAME');
 
 
         $listener = $this->getUploaderListener();
