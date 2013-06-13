@@ -14,7 +14,7 @@ before_script:
     - "mkdir -p ~/.composer"
     - cp .travis.composer.config.json ~/.composer/config.json
     - composer self-update
-    - php composer.phar require symfony/framework-bundle:${SYMFONY_VERSION}
+    - composer require symfony/framework-bundle:${SYMFONY_VERSION}
     - composer install --dev
 
 notifications:
