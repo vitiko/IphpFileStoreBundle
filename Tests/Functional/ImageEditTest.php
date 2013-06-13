@@ -12,7 +12,6 @@ class ImageEditTest extends BaseTestCase
 {
     public function testImageEdit()
     {
-
         $client = $this->createClient();
         $this->importDatabaseSchema();
 
@@ -29,10 +28,7 @@ class ImageEditTest extends BaseTestCase
         $this->getEntityManager()->persist($photo);
         $this->getEntityManager()->flush();
 
-
-
         unset($photo);
-        
         $photoLoaded = $this->getEntityManager()->getRepository('TestBundle:Photo')->findOneById(1);
 
         $this->assertSame($photoLoaded->getPhoto(), array(
@@ -46,13 +42,8 @@ class ImageEditTest extends BaseTestCase
             'height' => 531
         ));
 
-
-
-
         $crawler = $client->request('GET', '/edit/' . $photoLoaded->getId() . '/');
         unset($photoLoaded);
-
-        //print $client->getResponse()->getContent();
 
         $this->assertSame($crawler->filter('input[id="form_title"][value="Second photo"]')->count(), 1);
         $this->assertSame($crawler->filter('option[value="2013"][selected="selected"]')->count(), 1);
@@ -69,11 +60,7 @@ class ImageEditTest extends BaseTestCase
 
         $client->submit($form);
 
-
-
         $crawler = $client->followRedirect();
-
-        //print $client->getResponse()->getContent();
 
         //after photo delete NOT displaying loaded image and checkbox for delete image
         $this->assertSame($crawler->filter('img[src="/photo/2013/04/front-images-list.jpeg"]')->count(), 0);
