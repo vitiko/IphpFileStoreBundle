@@ -20,7 +20,6 @@ class FileSaveTest extends BaseTestCase
      */
     public function testFileSaveUpload()
     {
-        return;
         $client = $this->createClient();
         $this->importDatabaseSchema();
 

@@ -13,8 +13,6 @@ class ImageEditTest extends BaseTestCase
     public function testImageEdit()
     {
 
-        return;
-
         $client = $this->createClient();
         $this->importDatabaseSchema();
 
@@ -33,6 +31,8 @@ class ImageEditTest extends BaseTestCase
 
 
 
+        unset($photo);
+        
         $photoLoaded = $this->getEntityManager()->getRepository('TestBundle:Photo')->findOneById(1);
 
         $this->assertSame($photoLoaded->getPhoto(), array(
@@ -46,8 +46,11 @@ class ImageEditTest extends BaseTestCase
             'height' => 531
         ));
 
-        $crawler = $client->request('GET', '/edit/' . $photoLoaded->getId() . '/');
 
+
+
+        $crawler = $client->request('GET', '/edit/' . $photoLoaded->getId() . '/');
+        unset($photoLoaded);
 
         //print $client->getResponse()->getContent();
 
@@ -73,10 +76,11 @@ class ImageEditTest extends BaseTestCase
         //print $client->getResponse()->getContent();
 
         //after photo delete NOT displaying loaded image and checkbox for delete image
-        //$this->assertSame($crawler->filter('img[src="/photo/2013/04/front-images-list.jpeg"]')->count(), 0);
-        //$this->assertSame($crawler->filter('input[type="checkbox"][id="form_photo_delete"]')->count(), 0);
+        $this->assertSame($crawler->filter('img[src="/photo/2013/04/front-images-list.jpeg"]')->count(), 0);
+        $this->assertSame($crawler->filter('input[type="checkbox"][id="form_photo_delete"]')->count(), 0);
 
+        $this->getEntityManager()->clear();
         $photoAfterUpdate = $this->getEntityManager()->getRepository('TestBundle:Photo')->findOneById(1);
-        //$this->assertSame($photo->getPhoto(), null);
+        $this->assertSame($photoAfterUpdate->getPhoto(), null);
     }
 }

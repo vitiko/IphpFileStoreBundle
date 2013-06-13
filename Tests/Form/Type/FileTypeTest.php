@@ -117,7 +117,7 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
 
     function testGetParent()
     {
-        $this->assertSame($this->fileType->getParent(), 'field');
+        $this->assertSame($this->fileType->getParent(), 'form');
     }
 
     function testGetName()

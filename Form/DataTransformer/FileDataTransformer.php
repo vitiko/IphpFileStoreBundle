@@ -56,7 +56,7 @@ class FileDataTransformer implements DataTransformerInterface
 
             //File may no exists
             try {
-                $this->fileStorage->removeFile($this->mapping, $fileDataFromForm['fileName']);
+                $this->fileStorage->removeFile($this->mapping->resolveFileName($fileDataFromForm['fileName']));
 
             } catch (\Exception $e) {
             }

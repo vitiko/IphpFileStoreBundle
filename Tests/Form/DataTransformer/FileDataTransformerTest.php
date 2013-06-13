@@ -40,16 +40,22 @@ class FileDataTransformerTest extends \PHPUnit_Framework_TestCase
         $file = Mocks::getFileMock($this);
         $this->transformer->setMapping($propertyMapping);
 
+
+        $propertyMapping->expects($this->once())
+            ->method('resolveFileName')
+            ->with('123.jpg')
+            ->will($this->returnValue('/path/to/123.jpg'));
+
+
         $this->fileStorage
             ->expects($this->once())
             ->method('removeFile')
-            ->with($propertyMapping, '123.jpg');
+            ->with('/path/to/123.jpg');
 
         $this->assertSame(
             $this->transformer->reverseTransform(array('delete' => 1, 'file' => $file, 'fileName' => '123.jpg')),
             $file);
     }
-
 
 
     function testReverseTransformNoDeleteFile()
