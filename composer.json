@@ -13,24 +13,24 @@
     ],
 
     "require":{
-        "symfony/framework-bundle":">=2.2,<2.4-dev"
+        "symfony/framework-bundle":">=2.2,<2.4-dev@stable"
     },
 
     "require-dev":{
 
 
-        "symfony/class-loader": "*",
-        "symfony/twig-bundle": "*",
-        "symfony/finder": "*",
-        "symfony/browser-kit": "*",
-        "symfony/css-selector": "*",
-        "symfony/form": "*",
-        "symfony/validator": "*",
-        "symfony/process": "*",
-        "symfony/yaml": "*",
-        "sensio/framework-extra-bundle": "*",
-        "doctrine/doctrine-bundle": "*",
-        "doctrine/orm": "*",
+        "symfony/class-loader": "@stable",
+        "symfony/twig-bundle": "@stable",
+        "symfony/finder": "@stable",
+        "symfony/browser-kit": "@stable",
+        "symfony/css-selector": "@stable",
+        "symfony/form": "@stable",
+        "symfony/validator": "@stable",
+        "symfony/process": "@stable",
+        "symfony/yaml": "@stable",
+        "sensio/framework-extra-bundle": "@stable",
+        "doctrine/doctrine-bundle": "@stable",
+        "doctrine/orm": "@stable",
 
         "mikey179/vfsStream": "v1.2.0"
     },
