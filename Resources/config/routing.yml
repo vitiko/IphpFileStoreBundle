@@ -1,0 +1,3 @@
+_iphp_filestore:
+    resource: .
+    type: iphp_filestore

@@ -9,10 +9,19 @@
         <parameter key="iphp.filestore.namer.default.class">Iphp\FileStoreBundle\Naming\DefaultNamer</parameter>
         <parameter key="iphp.filestore.directory_namer.default.class">Iphp\FileStoreBundle\Naming\DefaultDirectoryNamer</parameter>
         <parameter key="iphp.filestore.namer.invoker.class">Iphp\FileStoreBundle\Naming\NamerServiceInvoker</parameter>
+        <parameter key="iphp.filestore.routing.loader.class">Iphp\FileStoreBundle\Routing\ProtectFilesLoader</parameter>
     </parameters>
 
 
     <services>
+
+
+        <!-- Routing for protected files -->
+        <service id="iphp.filestore.routing.loader" class="%iphp.filestore.routing.loader.class%">
+            <argument>%iphp.filestore.mappings%</argument>
+            <tag name="routing.loader"/>
+        </service>
+
 
         <!-- widget for file upload with "delete uploaded file" feature -->
         <service id="iphp.filestore.type.iphp_file" class="Iphp\FileStoreBundle\Form\Type\FileType">

@@ -2,8 +2,12 @@
 
 namespace Iphp\FileStoreBundle\FileStorage;
 
+use Iphp\FileStoreBundle\File\FileInterface;
+use Iphp\FileStoreBundle\File\LocalFileInterface;
+use Iphp\FileStoreBundle\File\UploadedFileInterface;
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * StorageInterface.
@@ -20,7 +24,12 @@ interface FileStorageInterface
      *
      * @param object $obj The object.
      */
-    public function upload(PropertyMapping $mapping, File $file);
+    public function saveUploadedFile (PropertyMapping $mapping, UploadedFile $file);
+
+    public function saveLocalFile (PropertyMapping $mapping, File  $file);
+
+
+    public function saveFile  (PropertyMapping $mapping, File $file);
 
 
     /**

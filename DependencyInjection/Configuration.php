@@ -32,6 +32,16 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('upload_dir')->end()
                             ->scalarNode('upload_path')->end()
+
+                            ->scalarNode('protected')->defaultFalse()->end()
+                            ->scalarNode('protected_dir')->defaultNull()->end()
+                            ->scalarNode('protected_controller')->defaultNull()->end()
+                            ->scalarNode('protected_authredirect')->defaultTrue()->end()
+                            ->arrayNode ('protected_roles')
+                              ->prototype('scalar')->end()
+                              ->defaultValue(array ('ROLE_SUPER_ADMIN'))
+                            ->end()
+
                             ->scalarNode('delete_on_remove')->defaultTrue()->end()
                             ->scalarNode('overwrite_duplicates')->defaultFalse()->end()
 

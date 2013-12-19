@@ -1,0 +1,99 @@
+{% block iphp_file_widget %}
+
+    {% set fileData = value %}
+
+    <div {{ block('widget_container_attributes') }}>
+
+        {% block iphp_file_widget_file %}
+            <div style="float:left">{{ form_widget(form.file) }}
+
+
+               {% if  form.isprotected is defined %}
+                {{ form_row (form.isprotected, {'label_attr' : { 'style' :'width:auto;padding-right:10px' }})}}
+               {%  endif  %}
+
+            </div>
+        {% endblock iphp_file_widget_file %}
+
+
+        {% if not is_mapped %}
+            Mapping for this field is not defined
+        {% else %}
+
+            <div style="float:left">
+
+
+                {# if was upload error value is uploadedFile and originalName no exists#}
+                {% if  fileData and fileData.originalName is defined %}
+
+                    {% block iphp_file_widget_filedata %}
+
+                        {% set fileUrl =  fileData.path %}
+
+                        {# |url_encode() #}
+
+
+
+
+                        <table>
+                            <tr>
+                                {% if fileData.width is defined %}
+
+
+                                    <td>
+                                        {% set imageSrc = fileUrl %}
+                                        {% set isProtected = form.vars.value.protected  %}
+                                        {% block iphp_file_widget_filedata_image %}
+                                            <a href="{{ fileUrl }}" target="_blank" class="full-img-link"><img
+                                                        src="{{ imageSrc }}"
+                                                        width="{{ fileData.width > 200 ? 200 : fileData.width }}"
+                                                        border="0"></a>
+                                        {% endblock iphp_file_widget_filedata_image %}
+
+                                    </td>
+                                    <td>&nbsp;&nbsp;&nbsp;</td>
+                                {% endif %}
+                                <td style="vertical-align: top;">
+
+
+                                    {% block iphp_file_widget_filedata_info %}
+
+
+                                        <a href="{{ fileUrl }}" target="_blank"
+                                           class="full-img-link">{{ fileData.fileName }}</a>
+                                        <br>{{ fileData.size /1000 }} Kb
+                                        {{ fileData.width is defined ? ', ' ~ fileData.width ~ 'x' ~ fileData.height : "" }}
+
+                                        {% if fileData.originalName !=  fileData.fileName %}
+                                            <br>{% trans %}Original file name{% endtrans %}: {{ fileData.originalName }}
+                                        {% endif %}
+
+                                        <br><br>
+                                    {% endblock iphp_file_widget_filedata_info %}
+
+
+
+
+                                    {% block iphp_file_widget_filedata_delete %}
+                                        {{ form_row (form.delete, {'label_attr' : { 'style' :'width:auto;padding-right:10px' }})}}
+                                    {% endblock iphp_file_widget_filedata_delete %}
+
+                                </td>
+
+                            </tr>
+                        </table>
+
+
+                    {% endblock iphp_file_widget_filedata %}
+
+                {% endif %}
+
+            </div>
+        {% endif %}
+
+
+        {# dump( value) #}
+    </div>
+
+
+{% endblock iphp_file_widget %}

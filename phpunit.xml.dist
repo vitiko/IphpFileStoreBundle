@@ -5,10 +5,12 @@
     <testsuites>
         <testsuite name="IphpFileStoreBundle Test Suite">
             <directory suffix="Test.php">./Tests</directory>
+           <!-- <exclude>./Tests/Functional</exclude>-->
         </testsuite>
     </testsuites>
 
     <filter>
+
         <whitelist>
             <directory>./</directory>
             <exclude>

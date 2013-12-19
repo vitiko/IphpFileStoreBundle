@@ -145,7 +145,7 @@ class UploaderListener implements EventSubscriber
             if (!$this->deferredFiles[$obj]) continue;
 
             foreach ($this->deferredFiles[$obj] as $mapping) {
-                $fileData = $this->fileStorage->upload($mapping, $this->deferredFiles[$obj][$mapping]);
+                $fileData = $this->fileStorage->saveFile($mapping, $this->deferredFiles[$obj][$mapping]);
                 $mapping->setFileDataPropertyValue($fileData);
             }
 
@@ -170,7 +170,9 @@ class UploaderListener implements EventSubscriber
             $file = $mapping->getFileUploadPropertyValue();
 
             $currentFileData = $this->dataStorage->currentFieldData($mapping->getFileDataPropertyName(), $args);
-            $currentFileName = $currentFileData ? $mapping->resolveFileName($currentFileData['fileName']) : null;
+            $currentFileName = $currentFileData ?
+                $mapping->resolveFileName($currentFileData['fileName'],
+                    isset($currentFileData['protected']) && $currentFileData['protected'] ? true : false) : null;
 
 
             //If no new file
@@ -179,6 +181,8 @@ class UploaderListener implements EventSubscriber
                 if ($currentFileData) {
                     if (!$this->fileStorage->fileExists($currentFileName)) {
 
+
+                        //try to restore file by web path
                         $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'].$currentFileData['path'];
 
                         if ($this->fileStorage->fileExists($fileNameByWebDir))
@@ -199,14 +203,37 @@ class UploaderListener implements EventSubscriber
             } //uploaded file has deleted status
             else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
                 if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
-            } else {
+            }
+
+
+            //changed protect attribute
+/*            else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isProtected()) {
+
+
+                $fileData = $this->fileStorage->move($mapping, $file);
+                $mapping->setFileDataPropertyValue($fileData);
+
+                die ('Protect in action!');
+                //if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
+
+
+
+
+            }*/
+
+
+            else {
 
                 //Old value (file) exits and uploaded new file
                 if ($currentFileData && !$this->fileStorage->isSameFile($file, $currentFileName))
                     //before upload new file delete old file
                     $this->fileStorage->removeFile($currentFileName);
 
-                $fileData = $this->fileStorage->upload($mapping, $file);
+                $fileData = $this->fileStorage->saveFile ($mapping, $file);
+
+
+
+
                 $mapping->setFileDataPropertyValue($fileData);
             }
         }

@@ -46,6 +46,11 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $fileStorage;
 
+    /**
+     * @var \Symfony\Component\Form\FormFactoryInterface
+     */
+    protected $formFactory;
+
     function setUp()
     {
 
@@ -55,11 +60,15 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->namerServiceInvoker = Mocks::getNamerServiceInvokerMock($this);
 
+        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->propertyMappingfactory = Mocks::getPropertyMappingFactoryMock($this,
             $this->namerServiceInvoker, $this->driver /*, DummyEntity::getDefaultFileStoreConfig()*/);
 
-        $this->fileType = new FileType ($this->propertyMappingfactory, $this->dataStorage, $this->fileStorage);
+        $this->fileType = new FileType (
+            $this->propertyMappingfactory, $this->dataStorage, $this->fileStorage, $this->formFactory );
     }
 
 
@@ -93,7 +102,8 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
 
 
         $transformer = new FileDataTransformer($this->fileStorage);
-        $subscriber = new FileTypeBindSubscriber($this->propertyMappingfactory, $this->dataStorage, $transformer);
+        $subscriber = new FileTypeBindSubscriber(
+            $this->propertyMappingfactory, $this->dataStorage, $transformer, $this->formFactory);
 
 
         $formBuilder->expects($this->once())
@@ -109,6 +119,12 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
         $formBuilder->expects($this->any())
             ->method('add')
             ->will($this->returnValue($formBuilder));
+
+        $formBuilder->expects($this->once())
+            ->method('getFormFactory')
+            ->will($this->returnValue($this->formFactory));
+
+
 
 
         $this->fileType->buildForm($formBuilder, array());

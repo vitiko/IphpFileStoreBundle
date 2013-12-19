@@ -1,11 +1,13 @@
 <?php
 namespace Iphp\FileStoreBundle\Form\Type;
+
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
 use Iphp\FileStoreBundle\Form\DataTransformer\FileDataTransformer;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Iphp\FileStoreBundle\Mapping\PropertyMappingFactory;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * @author Vitiko <vitiko@mail.ru>
@@ -29,20 +31,59 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
      */
     private $dataStorage;
 
+    /**
+     * @var \Symfony\Component\Form\FormFactoryInterface
+     */
+    private $formFactory;
+
+
     public function __construct(PropertyMappingFactory $mappingFactory,
                                 DataStorageInterface $dataStorage,
-                                FileDataTransformer $transformer)
+                                FileDataTransformer $transformer,
+                                FormFactoryInterface $formFactory)
     {
         $this->mappingFactory = $mappingFactory;
         $this->dataStorage = $dataStorage;
         $this->transformer = $transformer;
+        $this->formFactory = $formFactory;
     }
 
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::PRE_BIND => 'preBind');
+        return array(
+            FormEvents::PRE_BIND => 'preBind',
+            FormEvents::POST_SET_DATA => 'postSet'
+        );
     }
 
+
+    public function postSet(FormEvent $event)
+    {
+        $data = $event->getData();
+        $form = $event->getForm();
+
+        //for first call event parent is null, cause of setData(null) in Form constructor.
+        if (!$form->getParent()) return;
+        $obj = $form->getParent()->getData();
+        if (!$obj) return;
+
+        $mapping = $this->mappingFactory->getMappingFromField($obj,
+            $this->dataStorage->getReflectionClass($obj),
+            $form->getName());
+        if ($mapping) {
+            $this->transformer->setMapping($mapping);
+
+            if ($mapping->getProtected() == 'ondemand') {
+
+                $form->add($this->formFactory->createNamed('isprotected', 'checkbox', null, array(
+
+                    'label' => 'Protected file',
+                    'required' => false
+                )));
+            }
+        }
+
+    }
 
     public function preBind(FormEvent $event)
     {
@@ -54,7 +95,7 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
         //For oneToMany at SonataAdmin
         if (!$obj) return;
 
-        $mapping =  $this->mappingFactory->getMappingFromField($obj,
+        $mapping = $this->mappingFactory->getMappingFromField($obj,
             $this->dataStorage->getReflectionClass($obj),
             $form->getName());
         if ($mapping) $this->transformer->setMapping($mapping);

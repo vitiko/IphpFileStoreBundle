@@ -126,5 +126,11 @@ class PropertyMappingFactory
     }
 
 
+    function getMappingConfig ($mappingName)
+    {
+        return isset($this->mappingsConfig[$mappingName]) ? $this->mappingsConfig[$mappingName] : null;
+    }
+
+
 
 }

@@ -11,6 +11,12 @@
                 <source>Delete</source>
                 <target>Удалить</target>
             </trans-unit>
+
+            <trans-unit id="Protected file">
+                <source>Protected file</source>
+                <target>Защищенный файл</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

@@ -210,7 +210,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->dataStorage->expects($this->once())->method('recomputeChangeSet')->with($args);
 
-        $this->fileStorage->expects($this->never())->method('upload');
+        $this->fileStorage->expects($this->never())->method('saveFile');
         $this->fileStorage->expects($this->never())->method('removeFile');
 
 
@@ -263,7 +263,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * Test the preUpdate method - With file, no current file
+     * Test the preUpdate method - With setted file, no current file
      */
     public function testPreUpdateWithFileNoCurrent()
     {
@@ -277,7 +277,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->fileStorage
             ->expects($this->once())
-            ->method('upload')
+            ->method('saveFile')
             ->with($propertyMapping, $file)
             ->will($this->returnValue(array('fileName' => '111')));
 
@@ -293,6 +293,8 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
         $listener->preUpdate($args);
 
         $this->assertEquals($listener->getDeferredObjectNum(), 0);
+
+
     }
 
 
@@ -314,7 +316,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->fileStorage
             ->expects($this->once())
-            ->method('upload')
+            ->method('saveFile')
             ->with($propertyMapping, $file)
             ->will($this->returnValue(array('fileName' => 'NEW_NAME')));
 
@@ -374,7 +376,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->fileStorage
             ->expects($this->once())
-            ->method('upload')
+            ->method('saveFile')
             ->with($propertyMapping, $file)
             ->will($this->returnValue(array('fileName' => 'CURRENT_NAME')));
 
@@ -440,7 +442,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
             ->method('setFileDataPropertyValue')
             ->with(null);
 
-        $this->fileStorage->expects($this->never())->method('upload');
+        $this->fileStorage->expects($this->never())->method('saveFile');
         $this->dataStorage->expects($this->once())->method('recomputeChangeSet')->with($args);
 
         $listener = $this->getUploaderListener();
@@ -457,7 +459,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
     {
         $args = Mocks::getEventArgsMock($this);
 
-        $this->fileStorage->expects($this->never())->method('upload');
+        $this->fileStorage->expects($this->never())->method('saveFile');
         $this->dataStorage->expects($this->never())->method('postFlush');
 
         $listener = $this->getUploaderListener();
@@ -485,7 +487,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
 
         $this->fileStorage->expects($this->once())
-            ->method('upload')
+            ->method('saveFile')
             ->with($propertyMapping, $file)
             ->will($this->returnValue(array('fileName' => 'NEW_NAME')));
 

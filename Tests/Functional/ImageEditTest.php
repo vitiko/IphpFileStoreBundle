@@ -38,8 +38,10 @@ class ImageEditTest extends BaseTestCase
             'mimeType' => 'image/jpeg',
             'size' => $existsFile->getSize(),
             'path' => '/photo/2013/04/front-images-list.jpeg',
+            'protected' => false,
             'width' => 445,
             'height' => 531
+
         ));
 
         $crawler = $client->request('GET', '/edit/' . $photoLoaded->getId() . '/');

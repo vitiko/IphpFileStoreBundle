@@ -131,7 +131,7 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertFileNotExists($this->targetImageFileExistingDir);
 
 
-        $fileData = $this->storage->upload($propertyMapping, $file);
+        $fileData = $this->storage->saveFile($propertyMapping, $file);
 
 
         $this->assertFileExists($this->uploadedImageFile);
@@ -160,7 +160,7 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(dirname($this->targetImageFileExistingDir));
 
         $filesize = filesize($this->uploadedImageFile);
-        $fileData = $this->storage->upload($propertyMapping, $uploadedFile);
+        $fileData = $this->storage->saveFile($propertyMapping, $uploadedFile);
         $this->assertFileExists($this->targetImageFileExistingDir);
         $this->assertFileNotExists($this->uploadedImageFile);
         $this->assertTrue(filesize($this->targetImageFileExistingDir) == $filesize);
@@ -172,7 +172,8 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
             'originalName' => '123.jpg',
             'mimeType' => 'image/jpeg',
             'size' => $filesize,
-            'path' => '/images/123.jpg'
+            'path' => '/images/123.jpg',
+            'protected' => false
         );
 
         if (function_exists('getimagesize')) {
@@ -205,7 +206,7 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertFileNotExists(dirname($this->targetImageFileNewDir));
         $filesize = filesize($this->uploadedImageFile);
 
-        $fileData = $this->storage->upload($propertyMapping, $file);
+        $fileData = $this->storage->saveFile($propertyMapping, $file);
 
         $this->assertFileExists(dirname($this->targetImageFileNewDir));
         $this->assertFileExists($this->targetImageFileNewDir);
@@ -217,7 +218,8 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
             'originalName' => '123.jpg',
             'mimeType' => 'image/jpeg',
             'size' => $filesize,
-            'path' => '/images/new/123.jpg'
+            'path' => '/images/new/123.jpg',
+            'protected' => false
         );
 
         if (function_exists('getimagesize')) {
@@ -259,7 +261,7 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
             return false;
         });
 
-        $fileData = $this->storage->upload($propertyMapping,  $uploadedFile);
+        $fileData = $this->storage->saveFile($propertyMapping,  $uploadedFile);
     }
 
 
@@ -289,7 +291,7 @@ class FileSystemStorageTest extends \PHPUnit_Framework_TestCase
             return false;
         });
 
-        $fileData = $this->storage->upload($propertyMapping,  $uploadedFile);
+        $fileData = $this->storage->saveFile($propertyMapping,  $uploadedFile);
     }
 
 

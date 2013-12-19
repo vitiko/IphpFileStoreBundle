@@ -2,6 +2,9 @@
 
 namespace Iphp\FileStoreBundle\FileStorage;
 
+use Iphp\FileStoreBundle\File\FileInterface;
+use Iphp\FileStoreBundle\File\LocalFileInterface;
+use Iphp\FileStoreBundle\File\UploadedFileInterface;
 use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
 use Iphp\FileStoreBundle\Mapping\PropertyMapping;
 
@@ -57,22 +60,6 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-
-
-    protected function getOriginalName(File $file)
-    {
-        return $file instanceof UploadedFile ?
-            $file->getClientOriginalName() : $file->getFilename();
-    }
-
-
-    protected function getMimeType(File $file)
-    {
-        return $file instanceof UploadedFile ?
-            $file->getClientMimeType() : $file->getMimeType();
-    }
-
-
     public function   isSameFile (File $file,  $fullFileName)
     {
         return  call_user_func(
@@ -123,38 +110,70 @@ class FileSystemStorage implements FileStorageInterface
     }
 
 
-    /**
-     * {@inheritDoc}
-     * File may be \Symfony\Component\HttpFoundation\File\File or \Symfony\Component\HttpFoundation\File\UploadedFile
-     */
-    public function upload(PropertyMapping $mapping, File $file)
+
+
+    public function saveLocalFile(PropertyMapping $mapping, File $file)
     {
-        $originalName = $this->getOriginalName($file);
-        $mimeType = $this->getMimeType($file);
+        $originalName = $file instanceof FileInterface && $file->getOriginalName() ?
+            $file->getOriginalName() :  $file->getFilename();
+        $mimeType = $file->getMimeType();
+
+        $fileProtected = $file instanceof FileInterface && $file->isProtected();
 
         //transform filename and directory name if namer exists in mapping definition
-        list ($fileName, $webPath) = $mapping->prepareFileName($originalName, $this);
-        $fullFileName = $mapping->resolveFileName($fileName);
+        list ($fileName, $webPath) = $mapping->prepareFileName($originalName, $this,     $fileProtected );
+
+        $fullFileName = $mapping->resolveFileName($fileName,  $fileProtected );
+
 
         //check if file already placed in needed position
         if (!$this->isSameFile($file, $fullFileName)) {
             $fileInfo = pathinfo($fullFileName);
+            $this->checkDirectory($fileInfo['dirname']);
 
-            if ($file instanceof UploadedFile)
+            if ( $file instanceof FileInterface && $file->getSaveSource() == false)   $file->move($fileInfo['dirname'], $fileInfo['basename']); else
             {
-                $this->checkDirectory($fileInfo['dirname']);
-                $file->move($fileInfo['dirname'], $fileInfo['basename']);
+                $this->copyFile($file->getPathname(), $fileInfo['dirname'], $fileInfo['basename']);
             }
-            else  $this->copyFile($file->getPathname(), $fileInfo['dirname'], $fileInfo['basename']);
         }
 
+        return $this->prepareFileData($fileName, $originalName, $mimeType, $fullFileName, $webPath,  $fileProtected);
+    }
 
+
+    public function saveUploadedFile(PropertyMapping $mapping, UploadedFile   $file)
+    {
+        $originalName = $file->getClientOriginalName();
+        $mimeType = $file->getClientMimeType();
+
+        //transform filename and directory name if namer exists in mapping definition
+        list ($fileName, $webPath) = $mapping->prepareFileName($originalName, $this);
+
+        $fileProtected = $file instanceof UploadedFileInterface && $file->isProtected();
+
+        $fullFileName = $mapping->resolveFileName($fileName,  $fileProtected );
+
+
+        $fileInfo = pathinfo($fullFileName);
+
+        $this->checkDirectory($fileInfo['dirname']);
+        $file->move($fileInfo['dirname'], $fileInfo['basename']);
+
+
+        return $this->prepareFileData($fileName, $originalName, $mimeType, $fullFileName, $webPath,  $fileProtected);
+    }
+
+
+
+    protected function prepareFileData ($fileName, $originalName, $mimeType, $fullFileName, $webPath,  $protected)
+    {
         $fileData = array(
             'fileName' => $fileName,
             'originalName' => $originalName,
             'mimeType' => $mimeType,
             'size' => filesize($fullFileName),
-            'path' => $webPath
+            'path' => $webPath,
+            'protected' => $protected ? true : false
         );
 
         if (!$fileData['path'])
@@ -164,7 +183,7 @@ class FileSystemStorage implements FileStorageInterface
         $ext = substr($originalName,strrpos ($originalName,'.')+1);
 
         if ((in_array($fileData['mimeType'], array('image/png', 'image/jpeg', 'image/pjpeg')) ||
-            in_array ($ext,array ('jpeg','jpg','png')))
+                in_array ($ext,array ('jpeg','jpg','png')))
             && function_exists('getimagesize')
         ) {
             list($width, $height, $type) = @getimagesize($fullFileName);
@@ -174,6 +193,17 @@ class FileSystemStorage implements FileStorageInterface
         }
 
         return $fileData;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     * File may be \Symfony\Component\HttpFoundation\File\File or \Symfony\Component\HttpFoundation\File\UploadedFile
+     */
+    public function saveFile (PropertyMapping $mapping,  File $file)
+    {
+        if ($file instanceof UploadedFile ) return $this->saveUploadedFile($mapping, $file);
+        else return $this->saveLocalFile($mapping, $file);
     }
 
 
@@ -198,10 +228,4 @@ class FileSystemStorage implements FileStorageInterface
     {
         return file_exists($fullFileName);
     }
-
-
-
-
-
-
 }

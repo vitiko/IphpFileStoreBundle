@@ -16,8 +16,6 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class PropertyMapping
 {
-
-
     protected $obj;
 
     /**
@@ -152,13 +150,6 @@ class PropertyMapping
                     isset($namer['params']) ? $namer['params'] : array());
 
 
-/*                $subPath = call_user_func(
-                    array($this->container->get($namer['service']), $method . 'Rename'),
-                    $this,
-                    $replaceMode ? $path : $fileName,
-                    isset($namer['params']) ? $namer['params'] : array());*/
-
-
                 if ($replaceMode) $path = $subPath;
                 else $path .= ($subPath ? '/' : '') . $subPath;
             }
@@ -169,10 +160,9 @@ class PropertyMapping
     }
 
 
-    public function needResolveCollision($fileName, FileStorageInterface $fileStorage)
+    public function needResolveCollision($fileName, FileStorageInterface $fileStorage, $protected = false)
     {
-        //print "\n -->".$fileName;
-        return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this->resolveFileName($fileName));
+        return !$this->isOverwriteDuplicates() && $fileStorage->fileExists($this->resolveFileName($fileName,$protected));
     }
 
 
@@ -182,21 +172,22 @@ class PropertyMapping
      * @return array relative or full fileName and file path at web
      * @throws \Exception
      */
-    public function prepareFileName($originalName, FileStorageInterface $fileStorage)
+    public function prepareFileName($originalName, FileStorageInterface $fileStorage, $protected = false)
     {
+
         $fileName = $origName = $this->useFileNamer($originalName);
         $dirName = $this->useDirectoryNamer($fileName, $originalName);
         if (substr($dirName,-1) != '/') $dirName.='/';
 
         $try = 0;
 
-        while ($this->needResolveCollision(  $dirName  . $fileName , $fileStorage)) {
+        while ($this->needResolveCollision(  $dirName  . $fileName , $fileStorage, $protected)) {
+
             if ($try > 15)
                 throw new \Exception ("Can't resolve collision for file  " . $fileName);
 
             $fileName = $this->resolveFileCollision($origName, $originalName, ++$try);
         }
-
 
         return array(
             //file system  path
@@ -215,10 +206,8 @@ class PropertyMapping
      */
     public function resolveFileCollision($fileName, $clientOriginalName, $attempt = 1)
     {
-
         if ($this->hasNamer()) {
             $firstNamer = current($this->config['namer']);
-
 
            return $this->namerServiceInvoker->resolveCollision ($firstNamer['service'],  $fileName, $attempt);
         }
@@ -233,10 +222,33 @@ class PropertyMapping
     }
 
 
+    public function getStoreDir ($protected = false)
+    {
+        return $this->getProtected() === true || $this->getProtected() == 'ondemand' && $protected ?
+            $this->getProtectedDir() : $this->getUploadDir();
+    }
+
+
     public function getUploadPath()
     {
         return $this->config['upload_path'];
     }
+
+
+    public function getProtected()
+    {
+        return isset($this->config['protected']) && $this->config['protected'];
+    }
+
+
+
+    public function getProtectedDir()
+    {
+        return $this->config['protected_dir'];
+    }
+
+
+
 
 
     /**
@@ -344,15 +356,19 @@ class PropertyMapping
     }
 
 
-    public function resolveFileName($fileName = null)
+    public function resolveFileName($fileName = null, $protected = null)
     {
         if (!$fileName) {
             $fileData = $this->getFileDataPropertyValue();
-            if ($fileData) $fileName = $fileData['fileName'];
+            if ($fileData)
+            {
+                $fileName = $fileData['fileName'];
+                $protected = isset($fileData['protected']) && $fileData['protected'];
+            }
         }
         if (!$fileName) return null;
 
-        $dir = $this->isStoreFullDir() ? '' : $this->getUploadDir();
+        $dir = $this->isStoreFullDir() ? '' : $this->getStoreDir($protected);
         return $dir . (substr($dir,-1) != '/'  &&  substr($fileName,0,1) != '/' ? '/' : ''). $fileName;
     }
 

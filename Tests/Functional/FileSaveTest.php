@@ -45,6 +45,7 @@ class FileSaveTest extends BaseTestCase
             'mimeType' => 'text/plain',
             'size' => 9,
             'path' => '/file/File/file/2013/1.txt',
+            'protected' => false
         ));
 
         unset($file);
@@ -83,6 +84,7 @@ class FileSaveTest extends BaseTestCase
             'mimeType' => 'text/plain',
             'size' => 9,
             'path' => '/other/uploads/1/new-file.txt',
+            'protected' => false
         ));
 
 

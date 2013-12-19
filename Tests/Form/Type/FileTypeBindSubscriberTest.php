@@ -18,7 +18,7 @@ class FileTypeBindSubscriberTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory  $propertyMappingfactory
+     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory $propertyMappingfactory
      */
     protected $propertyMappingFactory;
 
@@ -46,12 +46,21 @@ class FileTypeBindSubscriberTest extends \PHPUnit_Framework_TestCase
     protected $transformer;
 
 
+    /**
+     * @var \Symfony\Component\Form\FormFactoryInterface
+     */
+    protected $formFactory;
+
+
     public function setUp()
     {
         $this->dataStorage = Mocks::getDataStorageMock($this);
         $this->driver = Mocks::getAnnotationDriverMock($this);
         $this->namerServiceInvoker = Mocks::getNamerServiceInvokerMock($this);
 
+        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->propertyMappingFactory = Mocks::getPropertyMappingFactoryMock($this,
             $this->namerServiceInvoker, $this->driver);
@@ -61,13 +70,17 @@ class FileTypeBindSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->subscriber = new FileTypeBindSubscriber ($this->propertyMappingFactory, $this->dataStorage, $this->transformer);
+        $this->subscriber = new FileTypeBindSubscriber (
+            $this->propertyMappingFactory, $this->dataStorage, $this->transformer, $this->formFactory);
     }
 
 
     function testSubscribedEvents()
     {
-        $this->assertSame(FileTypeBindSubscriber::getSubscribedEvents(), array(FormEvents::PRE_BIND => 'preBind'));
+        $this->assertSame(FileTypeBindSubscriber::getSubscribedEvents(), array(
+            FormEvents::PRE_BIND => 'preBind',
+            FormEvents::POST_SET_DATA => 'postSet'
+        ));
     }
 
 
