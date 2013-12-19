@@ -7,6 +7,7 @@ php:
 env:
     - SYMFONY_VERSION=2.2.*
     - SYMFONY_VERSION=2.3.*
+    - SYMFONY_VERSION=2.4.*
 
 before_script:
 
@@ -15,6 +16,7 @@ before_script:
     - cp .travis.composer.config.json ~/.composer/config.json
     - composer self-update
     - composer require symfony/framework-bundle:${SYMFONY_VERSION}
+    - composer require symfony/templating:${SYMFONY_VERSION}
     - composer install --dev
 
 notifications:
