@@ -1,7 +1,18 @@
 photo_index:
-    pattern:      /
+    pattern:      /list/
     defaults:  { _controller: TestBundle:Default:index }
 
 photo_edit:
     pattern:      /edit/{id}/
     defaults:  { _controller: TestBundle:Default:edit }
+
+
+photo_index_protected:
+    pattern:      /list-protected/
+    defaults:  { _controller: TestBundle:Default:indexProtected }
+
+
+#routing for protected files
+_iphp_filestore:
+    resource: .
+    type:     iphp_filestore

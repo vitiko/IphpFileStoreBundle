@@ -6,10 +6,20 @@
 
 
     <parameters>
+
+
+        <parameter key="iphp.filestore.uploader_listener.class">Iphp\FileStoreBundle\EventListener\UploaderListener</parameter>
+        <parameter key="iphp.filestore.mapping_factory.class">Iphp\FileStoreBundle\Mapping\PropertyMappingFactory</parameter>
+        <parameter key="iphp.filestore.file_type.class">Iphp\FileStoreBundle\Form\Type\FileType</parameter>
         <parameter key="iphp.filestore.namer.default.class">Iphp\FileStoreBundle\Naming\DefaultNamer</parameter>
         <parameter key="iphp.filestore.directory_namer.default.class">Iphp\FileStoreBundle\Naming\DefaultDirectoryNamer</parameter>
         <parameter key="iphp.filestore.namer.invoker.class">Iphp\FileStoreBundle\Naming\NamerServiceInvoker</parameter>
         <parameter key="iphp.filestore.routing.loader.class">Iphp\FileStoreBundle\Routing\ProtectFilesLoader</parameter>
+        <parameter key="iphp.filestore.annotation_driver.class">Iphp\FileStoreBundle\Driver\AnnotationDriver</parameter>
+        <parameter key="iphp.filestore.file_storage.class">Iphp\FileStoreBundle\FileStorage\FileSystemStorage</parameter>
+        <parameter key="iphp.filestore.file_locator.class">Iphp\FileStoreBundle\Locator\FileLocator</parameter>
+
+
     </parameters>
 
 
@@ -24,7 +34,7 @@
 
 
         <!-- widget for file upload with "delete uploaded file" feature -->
-        <service id="iphp.filestore.type.iphp_file" class="Iphp\FileStoreBundle\Form\Type\FileType">
+        <service id="iphp.filestore.type.iphp_file" class="%iphp.filestore.file_type.class%">
             <tag name="form.type" alias="iphp_file"/>
             <argument type="service" id="iphp.filestore.mapping.factory"/>
             <argument type="service" id="iphp.filestore.datastorage"/>
@@ -46,7 +56,7 @@
         </service>
 
 
-        <service id="iphp.filestore.mapping.factory" class="Iphp\FileStoreBundle\Mapping\PropertyMappingFactory"
+        <service id="iphp.filestore.mapping.factory" class="%iphp.filestore.mapping_factory.class%"
                  public="false">
             <argument type="service" id="iphp.filestore.namer.invoker"/>
             <argument type="service" id="iphp.filestore.annotation.driver"/>
@@ -54,7 +64,7 @@
         </service>
 
         <!-- reading annotations from entity class file -->
-        <service id="iphp.filestore.annotation.driver" class="Iphp\FileStoreBundle\Driver\AnnotationDriver"
+        <service id="iphp.filestore.annotation.driver" class="%iphp.filestore.annotation_driver.class%"
                  public="false">
             <argument type="service" id="annotation_reader"/>
         </service>
@@ -63,15 +73,22 @@
         <!-- storing file information (orm adapter), set in IphpFileStoreExtension -->
         <service id="iphp.filestore.datastorage" class="%iphp.filestore.datastorage.class%" public="false"/>
 
-        <service id="iphp.filestore.filestorage.file_system" class="Iphp\FileStoreBundle\FileStorage\FileSystemStorage">
+        <service id="iphp.filestore.filestorage.file_system" class="%iphp.filestore.file_storage.class%">
         </service>
 
-        <service id="iphp.filestore.event_listener.uploader" class="Iphp\FileStoreBundle\EventListener\UploaderListener"
+        <service id="iphp.filestore.event_listener.uploader" class="%iphp.filestore.uploader_listener.class%"
                  public="false">
             <argument type="service" id="iphp.filestore.datastorage"/>
             <argument type="service" id="iphp.filestore.filestorage.file_system"/>
             <argument type="service" id="iphp.filestore.mapping.factory"/>
         </service>
+
+        <service id="iphp.filestore.file_locator" class="%iphp.filestore.file_locator.class%">
+            <argument type="service" id="iphp.filestore.mapping.factory"/>
+
+        </service>
+
+
     </services>
 
 </container>

@@ -5,6 +5,7 @@ namespace Iphp\FileStoreBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
@@ -39,10 +40,40 @@ class ProtectedController extends Controller
         }
         else
         {
-            throw new HttpException(401, 'Unauthorized access.' );
+
+
+           return $this->noAccessToFileAction();
+
+
         }
 
 
 
+    }
+
+
+
+
+
+    protected function noAccessToFileAction ()
+    {
+        if (!$this->getUser()) return $this->unauthorizedAction();
+
+        else return $this->insufficientRightsAction();
+    }
+
+
+
+    protected function unauthorizedAction()
+    {
+        throw new HttpException(401, 'Unauthorized access.' );
+
+        return array();
+    }
+
+
+    protected function insufficientRightsAction()
+    {
+        return $this->render ("IphpFileStoreBundle:Protected:insufficient.html.twig", array ())->setStatusCode(Response::HTTP_FORBIDDEN);
     }
 }

@@ -38,6 +38,7 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
+            new \Symfony\Bundle\SecurityBundle\SecurityBundle(),
 
             new  \Iphp\FileStoreBundle\IphpFileStoreBundle(),
             new  \Iphp\FileStoreBundle\Tests\Functional\TestBundle\TestBundle(),

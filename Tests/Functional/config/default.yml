@@ -2,6 +2,7 @@ imports:
     - { resource: framework.yml }
     - { resource: doctrine.yml }
     - { resource: twig.yml }
+    - { resource: security.yml }
     - { resource: database.php }
 
 
@@ -31,3 +32,71 @@ iphp_file_store:
                #naming file by id
                property: ~
 
+
+
+       file_protected:
+           protected: true
+           protected_dir: %kernel.test_env_dir%/protected-files/protected
+           upload_path: /file
+
+           #chain of directory namers
+           directory_namer:
+               entityName: ~
+               property:
+                   params: { use_field_name : true }
+               date:
+                   params: { field : date, depth : year }
+           namer:
+               #naming file by id
+               property: ~
+
+
+
+
+
+       file_protected_ondemand:
+           protected: ondemand
+           protected_dir: %kernel.test_env_dir%/protected-files/protected
+           upload_path: /file
+           upload_dir:  %kernel.test_env_dir%/web/file
+
+           #chain of directory namers
+           directory_namer:
+               entityName: ~
+               property:
+                   params: { use_field_name : true }
+               date:
+                   params: { field : date, depth : year }
+           namer:
+               #naming file by id
+               property: ~
+
+
+       photo_protected:
+           upload_path: /file
+           protected: true
+           protected_dir: %kernel.test_env_dir%/protected-files/protected
+
+
+           #chain of directory namers
+           directory_namer:
+               entityName: ~
+               property:
+                   params: { use_field_name : true }
+           namer: ~
+
+
+       photo_protected_ondemand:
+           upload_dir:  %kernel.test_env_dir%/web/file
+           upload_path: /file
+
+           protected: ondemand
+           protected_dir: %kernel.test_env_dir%/protected-files/protected
+
+
+           #chain of directory namers
+           directory_namer:
+               entityName: ~
+               property:
+                  params: { use_field_name : true }
+               namer: ~

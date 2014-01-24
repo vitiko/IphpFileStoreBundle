@@ -46,7 +46,7 @@ class File extends UploadableEntity
 
     /**
      * @param string $title
-     * @return Photo
+     * @return File
      */
     public function setTitle($title)
     {

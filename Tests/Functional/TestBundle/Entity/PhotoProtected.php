@@ -6,15 +6,16 @@ use Iphp\FileStoreBundle\Mapping\Annotation as FileStore;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
-
-
 /**
  * @ORM\Entity
- * @ORM\Table(name = "photo")
+ * @ORM\Table(name = "photo_protected")
  * @FileStore\Uploadable
- */
-class Photo
+   @author Vitiko <vitiko@mail.ru>
+ **/
+
+class PhotoProtected
 {
+
     /**
      * @var integer
      * @ORM\Id
@@ -39,21 +40,33 @@ class Photo
     /**
      * @ORM\Column(type="array")
      * @Assert\Image( maxSize="20M")
-     * @FileStore\UploadableField(mapping="photo")
+     * @FileStore\UploadableField(mapping="photo_protected")
      **/
-    protected $photo;
+    private $photo;
+
+
 
     /**
-     * @return integer
+     * @ORM\Column(type="array")
+     * @Assert\Image( maxSize="20M")
+     * @FileStore\UploadableField(mapping="photo_protected_ondemand")
+     **/
+    private $photoOndemand;
+
+
+
+
+    /**
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
+
     /**
      * @param string $title
-     * @return Photo
      */
     public function setTitle($title)
     {
@@ -69,23 +82,6 @@ class Photo
         return $this->title;
     }
 
-    /**
-     * @param array $photo
-     * @return Photo
-     */
-    public function setPhoto($photo)
-    {
-        $this->photo = $photo;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPhoto()
-    {
-        return $this->photo;
-    }
 
     /**
      * @param \Datetime $date
@@ -103,4 +99,45 @@ class Photo
     {
         return $this->date;
     }
-}
+
+
+
+    /**
+     * @param mixed $photo
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param mixed $photoOndemand
+     */
+    public function setPhotoOndemand($photoOndemand)
+    {
+        $this->photoOndemand = $photoOndemand;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhotoOndemand()
+    {
+        return $this->photoOndemand;
+    }
+
+
+
+
+
+} 

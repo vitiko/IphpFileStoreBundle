@@ -237,7 +237,7 @@ class PropertyMapping
 
     public function getProtected()
     {
-        return isset($this->config['protected']) && $this->config['protected'];
+        return isset($this->config['protected'])  ?  $this->config['protected'] : null;
     }
 
 
@@ -369,6 +369,7 @@ class PropertyMapping
         if (!$fileName) return null;
 
         $dir = $this->isStoreFullDir() ? '' : $this->getStoreDir($protected);
+
         return $dir . (substr($dir,-1) != '/'  &&  substr($fileName,0,1) != '/' ? '/' : ''). $fileName;
     }
 

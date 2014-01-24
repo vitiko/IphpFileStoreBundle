@@ -320,4 +320,24 @@ class PropertyMappingFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    function testGetMappingConfig()
+    {
+
+        $mappingData = array(
+            'upload_dir' => '/some/dir',
+            'upload_path' => '/some-path/'
+        );
+
+        $mappingsConfig = array(
+            'dummy_file' => $mappingData
+        );
+
+        $factory = new PropertyMappingFactory($this->namerServiceInvoker, $this->driver, $mappingsConfig);
+
+
+        $this->assertEquals($factory->getMappingConfig('dummy_file'),    $mappingData);
+        $this->assertEquals($factory->getMappingConfig('another_file'),    null);
+    }
+
+
 }

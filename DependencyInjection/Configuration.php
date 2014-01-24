@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('protected_authredirect')->defaultTrue()->end()
                             ->arrayNode ('protected_roles')
                               ->prototype('scalar')->end()
-                              ->defaultValue(array ('ROLE_SUPER_ADMIN'))
+                              ->defaultValue(array ('ROLE_ADMIN'))
                             ->end()
 
                             ->scalarNode('delete_on_remove')->defaultTrue()->end()

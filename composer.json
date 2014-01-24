@@ -21,6 +21,9 @@
  
         "symfony/class-loader": "@stable",
         "symfony/twig-bundle": "@stable",
+        "symfony/security-bundle": "@stable",
+        "symfony/security": "@stable",
+        "symfony/expression-language": "@stable",
         "symfony/finder": "@stable",
         "symfony/browser-kit": "@stable",
         "symfony/css-selector": "@stable",
