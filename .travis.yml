@@ -13,6 +13,10 @@ env:
     - SYMFONY_VERSION=2.4.*
     - SYMFONY_VERSION=2.5.*
 
+matrix:
+  allow_failures:
+    - php: hhvm
+
 before_script:
 
     # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
