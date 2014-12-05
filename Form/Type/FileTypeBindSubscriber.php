@@ -73,13 +73,25 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
         if ($mapping) {
             $this->transformer->setMapping($mapping);
 
+
+
+            //print '---'.$mapping->getProtected();
+
             if ($mapping->getProtected() == 'ondemand') {
 
-                $form->add($this->formFactory->createNamed('isprotected', 'checkbox', null, array(
+               // print 55;
+
+           $form->add($this->formFactory->createNamed('isprotected', 'checkbox', null, array(
 
                     'label' => 'Protected file',
                     'required' => false
                 )));
+
+         /*       $form->add ('isprotected', 'checkbox', array(
+
+                    'label' => 'Protected file',
+                    'required' => false
+                ));*/
             }
         }
 

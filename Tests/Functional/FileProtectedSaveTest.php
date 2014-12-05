@@ -73,7 +73,7 @@ class FileProtectedSaveTest extends BaseTestCase
       //  print_r ($client->getResponse());
 
         $this->assertEquals(
-            Response::HTTP_UNAUTHORIZED,
+            401,
             $client->getResponse()->getStatusCode()
         );
 

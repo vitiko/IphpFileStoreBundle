@@ -87,7 +87,7 @@ class DefaultController extends Controller
             ->add('date', 'date')
             //Using standart field type
             ->add('photo', 'file')
-            ->add ('photoOndemand','iphp_file')
+           // ->add ('photoOndemand','iphp_file')
             ->getForm();
 
 
