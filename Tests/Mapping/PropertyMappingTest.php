@@ -30,6 +30,11 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @param $object
+     * @param array $mergeConfig
+     * @return PropertyMapping
+     */
     public function getPropertyMapping($object, $mergeConfig = array())
     {
         $config = $object->defaultFileStoreConfig['dummy_file'];
@@ -131,6 +136,9 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
     {
         $propertyMapping = $this->getPropertyMapping(new DummyEntity());
 
+
+        //service iphp.filestore.namer.default, method translit  will invoke once,
+        //"ab cd" will be translited to "ab-cd"
         $this->namerServiceInvoker
             ->expects($this->once())
             ->method('rename')
@@ -175,6 +183,8 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
     {
         $propertyMapping = $this->getPropertyMapping(new DummyEntity());
 
+        //service iphp.filestore.namer.default, method translit  will invoke once,
+        //"ab cd" will be translited to "ab-cd"
         $this->namerServiceInvoker
             ->expects($this->once())
             ->method('rename')
@@ -188,17 +198,14 @@ class PropertyMappingTest extends \PHPUnit_Framework_TestCase
             ->method('resolveCollision')
             ->will($this->returnValue('ab-cd'));
 
-
-        $fileExistsCalls = 0;
-
         $this->fileStorage
             ->expects($this->any())
             ->method('fileExists')
-            ->will($this->returnCallback(function() use (&$fileExistsCalls)
+            ->will($this->returnCallback(function()
         {
             $args = func_get_args();
-            $fileExistsCalls++;
-            return $args[1] == '/ab-cd' ? true : false;
+
+            return $args[0] == '/www/web/images/ab-cd' ? true : false;
         }));
 
 
