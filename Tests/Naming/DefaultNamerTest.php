@@ -43,11 +43,11 @@ class DefaultNamerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($this->namer->translitRename($propertyMapping,
                 'En Français on a des caractères accentués !'),
-            'en-francais-on-a-des-caracteres-accentues-');
+            'en-francais-on-a-des-caracteres-accentues');
 
 
         $this->assertSame($this->namer->translitRename($propertyMapping,  ' ! , Давай-Давай .'),
-                                                                          '-davaj-davaj-.');
+                                                                          'davaj-davaj-.');
     }
 
 

@@ -23,39 +23,44 @@ class DefaultNamer
         $specChars = array ('Ь' => '','Ъ' => '', 'ъ' => '','ь' => '', '«' => '', '»' => '', '—' => '-' );
         $name = strtr($name,  $specChars );
 
-        if (function_exists('transliterator_transliterate')) {
+        if (1==2 && function_exists('transliterator_transliterate')) {
             $name = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower();', $name);
             $name = preg_replace('/[-\s]+/', '-', $name);
         } else {
 
 
             $iso = array(
-                "Є" => "YE", "І" => "I", "Ѓ" => "G", "і" => "i", "№" => "N", "є" => "ye", "ѓ" => "g",
+                "Є" => "E", "І" => "I", "Ѓ" => "G", "і" => "i", "№" => "N", "є" => "e", "ѓ" => "g",
+                "ç" => "c", "è" => "e","é" => "e",
+
+
                 "А" => "A", "Б" => "B", "В" => "V", "Г" => "G", "Д" => "D",
-                "Е" => "E", "Ё" => "YO", "Ж" => "ZH",
+                "Е" => "E", "Ё" => "e", "Ж" => "Z",
                 "З" => "Z", "И" => "I", "Й" => "J", "К" => "K", "Л" => "L",
                 "М" => "M", "Н" => "N", "О" => "O", "П" => "P", "Р" => "R",
                 "С" => "S", "Т" => "T", "У" => "U", "Ф" => "F", "Х" => "H",
-                "Ц" => "C", "Ч" => "CH", "Ш" => "S", "Щ" => "SHH",
-                "Ы" => "Y", "Э" => "E", "Ю" => "YU", "Я" => "YA",
+                "Ц" => "C", "Ч" => "C", "Ш" => "S", "Щ" => "S",
+                "Ы" => "Y", "Э" => "E", "Ю" => "U", "Я" => "A",
                 "а" => "a", "б" => "b", "в" => "v", "г" => "g", "д" => "d",
-                "е" => "e", "ё" => "yo", "ж" => "zh",
+                "е" => "e", "ё" => "e", "ж" => "z",
                 "з" => "z", "и" => "i", "й" => "j", "к" => "k", "л" => "l",
                 "м" => "m", "н" => "n", "о" => "o", "п" => "p", "р" => "r",
                 "с" => "s", "т" => "t", "у" => "u", "ф" => "f", "х" => "h",
-                "ц" => "c", "ч" => "ch", "ш" => "s", "щ" => "shh",
-                "ы" => "y",  "э" => "e", "ю" => "yu", "я" => "ya",
+                "ц" => "c", "ч" => "c", "ш" => "s", "щ" => "s",
+                "ы" => "y",  "э" => "e", "ю" => "u", "я" => "a",
             );
             $name = strtr($name, $iso);
-            // trim
-            $name = trim($name, '-');
 
-            // transliterate
-            if (function_exists('iconv')) {
-                $name = iconv('utf-8', 'us-ascii//TRANSLIT', $name);
-            }
+
+
             $name = strtolower($name);
         }
+
+        if (function_exists('iconv')) {
+            $name = iconv('utf-8', 'us-ascii//TRANSLIT//IGNORE', $name);
+        }
+        $name = trim($name, '-');
+
         return $name;
     }
 
