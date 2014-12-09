@@ -37,7 +37,7 @@ class DefaultNamerTest extends \PHPUnit_Framework_TestCase
     {
         $propertyMapping = Mocks::getPropertyMappingMock($this);
         $this->assertSame($this->namer->translitRename($propertyMapping, 'ФайлСторБандл -  спешиал эдишн'),
-            'fajlstorbandl-speshial-edishn');
+            'fajlstorbandl-spesial-edisn');
     }
 
 
