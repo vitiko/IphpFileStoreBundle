@@ -144,8 +144,7 @@ class Mocks
     static function getFileMock(\PHPUnit_Framework_TestCase $testCase)
     {
         return $testCase->getMockBuilder('Symfony\Component\HttpFoundation\File\File')
-           // ->disableOriginalConstructor()
-           ->setConstructorArgs (array (null, false))
+            ->setConstructorArgs(array(null, false))
             ->getMock();
     }
 
@@ -171,7 +170,7 @@ class Mocks
     static function getIphpFileMock(\PHPUnit_Framework_TestCase $testCase)
     {
         return $testCase->getMockBuilder('Iphp\FileStoreBundle\File\File')
-            ->disableOriginalConstructor()
+            ->setConstructorArgs(array(null, false))
             ->getMock();
     }
 
