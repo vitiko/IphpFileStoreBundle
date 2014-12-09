@@ -32,7 +32,7 @@
         "doctrine/doctrine-bundle": "@stable",
         "doctrine/orm": "@stable",
 
-        "mikey179/vfsStream": "v1.2.0"
+        "mikey179/vfsStream": "@stable"
     },
 
     "autoload":{
