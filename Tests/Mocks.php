@@ -144,7 +144,8 @@ class Mocks
     static function getFileMock(\PHPUnit_Framework_TestCase $testCase)
     {
         return $testCase->getMockBuilder('Symfony\Component\HttpFoundation\File\File')
-            ->disableOriginalConstructor()
+           // ->disableOriginalConstructor()
+           ->setConstructorArgs (array (null, false))
             ->getMock();
     }
 
