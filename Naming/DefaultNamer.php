@@ -17,11 +17,17 @@ class DefaultNamer
      */
     public function translitRename(PropertyMapping $propertyMapping, $name)
     {
+        $name = preg_replace('/[^\\pL\d.]+/u', '-', $name);
+
+
+        $specChars = array ('Ь' => '','Ъ' => '', 'ъ' => '','ь' => '', '«' => '', '»' => '', '—' => '-' );
+        $name = strtr($name,  $specChars );
+
         if (function_exists('transliterator_transliterate')) {
             $name = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower();', $name);
             $name = preg_replace('/[-\s]+/', '-', $name);
         } else {
-            $name = preg_replace('/[^\\pL\d.]+/u', '-', $name);
+
 
             $iso = array(
                 "Є" => "YE", "І" => "I", "Ѓ" => "G", "і" => "i", "№" => "N", "є" => "ye", "ѓ" => "g",
@@ -30,15 +36,15 @@ class DefaultNamer
                 "З" => "Z", "И" => "I", "Й" => "J", "К" => "K", "Л" => "L",
                 "М" => "M", "Н" => "N", "О" => "O", "П" => "P", "Р" => "R",
                 "С" => "S", "Т" => "T", "У" => "U", "Ф" => "F", "Х" => "H",
-                "Ц" => "C", "Ч" => "CH", "Ш" => "S", "Щ" => "SHH", "Ъ" => "'",
-                "Ы" => "Y", "Ь" => "", "Э" => "E", "Ю" => "YU", "Я" => "YA",
+                "Ц" => "C", "Ч" => "CH", "Ш" => "S", "Щ" => "SHH",
+                "Ы" => "Y", "Э" => "E", "Ю" => "YU", "Я" => "YA",
                 "а" => "a", "б" => "b", "в" => "v", "г" => "g", "д" => "d",
                 "е" => "e", "ё" => "yo", "ж" => "zh",
                 "з" => "z", "и" => "i", "й" => "j", "к" => "k", "л" => "l",
                 "м" => "m", "н" => "n", "о" => "o", "п" => "p", "р" => "r",
                 "с" => "s", "т" => "t", "у" => "u", "ф" => "f", "х" => "h",
-                "ц" => "c", "ч" => "ch", "ш" => "s", "щ" => "shh", "ъ" => "",
-                "ы" => "y", "ь" => "", "э" => "e", "ю" => "yu", "я" => "ya", "«" => "", "»" => "", "—" => "-"
+                "ц" => "c", "ч" => "ch", "ш" => "s", "щ" => "shh",
+                "ы" => "y",  "э" => "e", "ю" => "yu", "я" => "ya",
             );
             $name = strtr($name, $iso);
             // trim

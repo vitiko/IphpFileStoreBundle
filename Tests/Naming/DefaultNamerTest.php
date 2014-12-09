@@ -36,8 +36,18 @@ class DefaultNamerTest extends \PHPUnit_Framework_TestCase
     public function testTranslitRename()
     {
         $propertyMapping = Mocks::getPropertyMappingMock($this);
-        $this->assertSame($this->namer->translitRename($propertyMapping, 'ФайлСторБандл -  спешиал эдишн'),
-            'fajlstorbandl-spesial-edisn');
+        $this->assertSame($this->namer->translitRename($propertyMapping,
+                'АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя'),
+            'aabbvvggddeeeezzzziijjkkllmmnnoopprrssttuuffhhccccssssyyeeuuaa');
+
+
+        $this->assertSame($this->namer->translitRename($propertyMapping,
+                'En Français on a des caractères accentués !'),
+            'en-francais-on-a-des-caracteres-accentues-');
+
+
+        $this->assertSame($this->namer->translitRename($propertyMapping,  ' ! , Давай-Давай .'),
+                                                                          '-davaj-davaj-.');
     }
 
 
@@ -113,6 +123,6 @@ class DefaultNamerTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveCollision()
     {
-        $this->assertSame($this->namer->resolveCollision ('some-name.jpg',5), 'some-name_5.jpg');
+        $this->assertSame($this->namer->resolveCollision('some-name.jpg', 5), 'some-name_5.jpg');
     }
 }
