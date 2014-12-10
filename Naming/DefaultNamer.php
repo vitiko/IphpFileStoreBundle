@@ -19,21 +19,16 @@ class DefaultNamer
     {
         $name = preg_replace('/[^\\pL\d.]+/u', '-', $name);
 
-
         $specChars = array ('Ь' => '','Ъ' => '', 'ъ' => '','ь' => '', '«' => '', '»' => '', '—' => '-' );
         $name = strtr($name,  $specChars );
 
-        if (1==2 && function_exists('transliterator_transliterate')) {
+        if (function_exists('transliterator_transliterate')) {
             $name = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower();', $name);
             $name = preg_replace('/[-\s]+/', '-', $name);
         } else {
-
-
             $iso = array(
                 "Є" => "E", "І" => "I", "Ѓ" => "G", "і" => "i", "№" => "N", "є" => "e", "ѓ" => "g",
                 "ç" => "c", "è" => "e","é" => "e",
-
-
                 "А" => "A", "Б" => "B", "В" => "V", "Г" => "G", "Д" => "D",
                 "Е" => "E", "Ё" => "e", "Ж" => "Z",
                 "З" => "Z", "И" => "I", "Й" => "J", "К" => "K", "Л" => "L",
@@ -50,9 +45,6 @@ class DefaultNamer
                 "ы" => "y",  "э" => "e", "ю" => "u", "я" => "a",
             );
             $name = strtr($name, $iso);
-
-
-
             $name = strtolower($name);
         }
 
