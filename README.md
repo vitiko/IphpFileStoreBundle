@@ -23,7 +23,7 @@ Add the following lines in your composer.json:
 ```
 {
     "require": {
-        "iphp/filestore-bundle" : "dev-master" 
+        "iphp/filestore-bundle" : "@stable" 
     }
 }
 ```
