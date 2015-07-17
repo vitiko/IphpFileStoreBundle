@@ -67,7 +67,7 @@ class AnnotationDriver
      * Attempts to read the uploadable field annotations.
      *
      * @param  \ReflectionClass $class The reflection class.
-     * @return array            An array of UploadableField annotations.
+     * @return  \Iphp\FileStoreBundle\Mapping\Annotation\UploadableField[]
      */
     public function readUploadableFields(\ReflectionClass $class)
     {

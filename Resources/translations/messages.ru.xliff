@@ -11,6 +11,12 @@
                 <source>Delete</source>
                 <target>Удалить</target>
             </trans-unit>
+
+            <trans-unit id="Upload File">
+                <source>Upload File</source>
+                <target>Загрузить файл</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

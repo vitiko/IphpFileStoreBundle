@@ -51,8 +51,8 @@ class UploaderListener implements EventSubscriber
     /**
      * Constructs a new instance of UploaderListener.
      *
-     * @param \Iphp\FileStoreBundle\DataStorage\DataStorageInterface       $dataStorage  The dataStorage
-     * @param \Iphp\FileStoreBundle\FileStorage\FileStorageInterface       $fileStorage  The storage.
+     * @param \Iphp\FileStoreBundle\DataStorage\DataStorageInterface $dataStorage The dataStorage
+     * @param \Iphp\FileStoreBundle\FileStorage\FileStorageInterface $fileStorage The storage.
      * @param \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory $mappingFactory Mapping Factore
      */
     public function __construct(DataStorageInterface $dataStorage,
@@ -75,7 +75,7 @@ class UploaderListener implements EventSubscriber
     public function hasDeferredPropertyMapping($obj, PropertyMapping $mapping)
     {
         return $this->hasDeferredObject($obj) &&
-            isset($this->deferredFiles [$obj][$mapping]) && $this->deferredFiles [$obj][$mapping];
+        isset($this->deferredFiles [$obj][$mapping]) && $this->deferredFiles [$obj][$mapping];
     }
 
 
@@ -158,7 +158,7 @@ class UploaderListener implements EventSubscriber
     /**
      * Update the mapped file for Entity (obj)
      *
-     * @param \Doctrine\Common\EventArgs  $args
+     * @param \Doctrine\Common\EventArgs $args
      */
     public function preUpdate(\Doctrine\Common\EventArgs $args)
     {
@@ -169,7 +169,11 @@ class UploaderListener implements EventSubscriber
             //Uploaded or setted file
             $file = $mapping->getFileUploadPropertyValue();
 
-            $currentFileData = $this->dataStorage->currentFieldData($mapping->getFileDataPropertyName(), $args);
+
+            $currentFileData = ($mapping->getFileDataPropertyName() == $mapping->getFileUploadPropertyName()) ?
+                $this->dataStorage->currentFieldData($mapping->getFileDataPropertyName(), $args) :
+                $mapping->getFileDataPropertyValue();
+
             $currentFileName = $currentFileData ? $mapping->resolveFileName($currentFileData['fileName']) : null;
 
 
@@ -179,13 +183,12 @@ class UploaderListener implements EventSubscriber
                 if ($currentFileData) {
                     if (!$this->fileStorage->fileExists($currentFileName)) {
 
-                        $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'].$currentFileData['path'];
+                        $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'] . $currentFileData['path'];
 
-                        if ($this->fileStorage->fileExists($fileNameByWebDir))
-                        {
+                        if ($this->fileStorage->fileExists($fileNameByWebDir)) {
                             $file = new UploadedFile ($fileNameByWebDir,
-                                                      $currentFileData['originalName'], $currentFileData['mimeType'],
-                                                      null,  null, true);
+                                $currentFileData['originalName'], $currentFileData['mimeType'],
+                                null, null, true);
                             $fileData = $this->fileStorage->upload($mapping, $file);
                             $mapping->setFileDataPropertyValue($fileData);
                         }
@@ -194,7 +197,7 @@ class UploaderListener implements EventSubscriber
                     else $mapping->setFileDataPropertyValue($currentFileData);
 
                 }
- 
+
 
             } //uploaded file has deleted status
             else if ($file instanceof \Iphp\FileStoreBundle\File\File && $file->isDeleted()) {
