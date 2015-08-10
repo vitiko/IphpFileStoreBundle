@@ -17,10 +17,7 @@
     },
 
     "require-dev":{
-
-
         "symfony/class-loader": "@stable",
-        "symfony/twig-bundle": "@stable",
         "symfony/finder": "@stable",
         "symfony/browser-kit": "@stable",
         "symfony/css-selector": "@stable",
