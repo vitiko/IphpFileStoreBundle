@@ -17,8 +17,13 @@ class DefaultNamer
      */
     public function translitRename(PropertyMapping $propertyMapping, $name)
     {
+
+
+
+
         if (function_exists('transliterator_transliterate')) {
-            $name = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower();', $name);
+            $name = transliterator_transliterate("Any-Latin; Latin-ASCII; [\u0100-\u7fff] remove" , $name);
+            $name = preg_replace('/[^\\pL\d.]+/u', '-', $name);
             $name = preg_replace('/[-\s]+/', '-', $name);
         } else {
             $name = preg_replace('/[^\\pL\d.]+/u', '-', $name);
@@ -42,14 +47,21 @@ class DefaultNamer
             );
             $name = strtr($name, $iso);
             // trim
-            $name = trim($name, '-');
 
             // transliterate
             if (function_exists('iconv')) {
-                $name = iconv('utf-8', 'us-ascii//TRANSLIT', $name);
+                $name = iconv('utf-8', 'ASCII//TRANSLIT//IGNORE', $name);
             }
-            $name = strtolower($name);
+
+
+
         }
+
+        $name = trim($name, '-');
+        $name = strtolower($name);
+
+
+
         return $name;
     }
 

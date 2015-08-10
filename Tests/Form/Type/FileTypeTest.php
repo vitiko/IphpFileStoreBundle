@@ -111,7 +111,7 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($formBuilder));
 
 
-        $this->fileType->buildForm($formBuilder, array());
+        $this->fileType->buildForm($formBuilder, array('upload' => true));
     }
 
 
