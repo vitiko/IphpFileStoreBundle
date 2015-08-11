@@ -8,7 +8,6 @@ php:
   - hhvm
 
 env:
-    - SYMFONY_VERSION=2.2.*
     - SYMFONY_VERSION=2.3.*
     - SYMFONY_VERSION=2.4.*
     - SYMFONY_VERSION=2.5.*
@@ -18,6 +17,10 @@ env:
 matrix:
   allow_failures:
     - php: hhvm
+
+addons:
+  code_climate:
+      repo_token: f0a01fd708e8f258d3532dd82d1b55c3873953ad56fa2796d178483b9c9d6228f...
 
 before_script:
 

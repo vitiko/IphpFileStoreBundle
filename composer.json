@@ -28,8 +28,8 @@
         "sensio/framework-extra-bundle": "@stable",
         "doctrine/doctrine-bundle": "@stable",
         "doctrine/orm": "@stable",
-
-        "mikey179/vfsStream": "@stable"
+        "mikey179/vfsStream": "@stable",
+        "codeclimate/php-test-reporter": "dev-master"
     },
 
     "autoload": {
