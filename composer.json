@@ -7,21 +7,21 @@
     "license": "MIT",
     "authors": [
         {
-            "name":"Vitiko",
-            "email":"vitiko@mail.ru"
+            "name": "Vitiko",
+            "email": "vitiko@mail.ru"
         }
     ],
 
-    "require":{
-        "symfony/framework-bundle":"~2.3"
+    "require": {
+        "symfony/framework-bundle": "~2.3"
     },
 
-    "require-dev":{
+    "require-dev": {
+
         "symfony/class-loader": "@stable",
         "symfony/finder": "@stable",
         "symfony/browser-kit": "@stable",
         "symfony/css-selector": "@stable",
-        "symfony/form": "@stable",
         "symfony/validator": "@stable",
         "symfony/process": "@stable",
         "symfony/yaml": "@stable",
@@ -32,11 +32,11 @@
         "mikey179/vfsStream": "@stable"
     },
 
-    "autoload":{
-        "psr-0":{
-            "Iphp\\FileStoreBundle":""
+    "autoload": {
+        "psr-0": {
+            "Iphp\\FileStoreBundle": ""
         }
     },
-    "target-dir":"Iphp/FileStoreBundle"
+    "target-dir": "Iphp/FileStoreBundle"
 
 }
