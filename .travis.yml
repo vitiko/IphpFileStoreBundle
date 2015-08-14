@@ -28,10 +28,10 @@ before_script:
     - "mkdir -p ~/.composer"
     - cp .travis.composer.config.json ~/.composer/config.json
     - composer self-update
+    - composer require symfony/form:${SYMFONY_VERSION}
     - composer require symfony/twig-bundle:${SYMFONY_VERSION}
     - composer require symfony/twig-bridge:${SYMFONY_VERSION}
     - composer require symfony/templating:${SYMFONY_VERSION}
-    - composer require symfony/form:${SYMFONY_VERSION}
     - composer require symfony/doctrine-bridge:${SYMFONY_VERSION}
     - composer require symfony/framework-bundle:${SYMFONY_VERSION}
     - composer install --dev

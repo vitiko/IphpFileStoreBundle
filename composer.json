@@ -17,9 +17,9 @@
     },
 
     "require-dev": {
+        "symfony/form": "~2.3",
+        "symfony/twig-bundle": "~2.3",
 
-        "symfony/form": "@stable",
-        "symfony/twig-bundle": "@stable",
         "symfony/class-loader": "@stable",
         "symfony/finder": "@stable",
         "symfony/browser-kit": "@stable",
