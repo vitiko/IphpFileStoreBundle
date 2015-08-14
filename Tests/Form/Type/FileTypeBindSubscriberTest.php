@@ -18,7 +18,7 @@ class FileTypeBindSubscriberTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory  $propertyMappingfactory
+     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory $propertyMappingfactory
      */
     protected $propertyMappingFactory;
 
@@ -67,7 +67,9 @@ class FileTypeBindSubscriberTest extends \PHPUnit_Framework_TestCase
 
     function testSubscribedEvents()
     {
-        $this->assertSame(FileTypeBindSubscriber::getSubscribedEvents(), array(FormEvents::PRE_BIND => 'preBind'));
+        $this->assertSame(FileTypeBindSubscriber::getSubscribedEvents(),
+            array(FormEvents::PRE_SUBMIT => 'preBind',
+                  FormEvents::PRE_SET_DATA => 'preSet'));
     }
 
 

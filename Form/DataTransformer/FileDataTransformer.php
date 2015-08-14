@@ -16,6 +16,10 @@ use Iphp\FileStoreBundle\File\File as IphpFile;
 class FileDataTransformer implements DataTransformerInterface
 {
 
+    const MODE_UPLOAD_FIELD = 'upload_field';
+
+    const MODE_FILEDATA_FIELD = 'filedata_field';
+
     /**
      * @var \Iphp\FileStoreBundle\Mapping\PropertyMapping
      */
@@ -26,15 +30,26 @@ class FileDataTransformer implements DataTransformerInterface
      */
     protected $fileStorage;
 
+
+    protected $mode;
+
+
     function __construct(FileStorageInterface $fileStorage)
     {
         $this->fileStorage = $fileStorage;
     }
 
 
-    public function setMapping(PropertyMapping $mapping)
+    /**
+     * Sets in PRE_BIND form event
+     * @param PropertyMapping $mapping
+     * @param $mode
+     * @return $this
+     */
+    public function setMapping(PropertyMapping $mapping, $mode)
     {
         $this->mapping = $mapping;
+        $this->mode = $mode;
         return $this;
     }
 
@@ -52,8 +67,18 @@ class FileDataTransformer implements DataTransformerInterface
      */
     public function reverseTransform($fileDataFromForm)
     {
-        if ($this->mapping && $fileDataFromForm['delete']) {
+        //if file field != file upload field - no need to store 'delete' in serialized file data
+        if (isset($fileDataFromForm['delete']) && !$fileDataFromForm['delete'])
+            unset($fileDataFromForm['delete']);
 
+
+        if ($this->mapping && isset($fileDataFromForm['delete']) && $fileDataFromForm['delete']) {
+
+            if ($this->mode == self::MODE_FILEDATA_FIELD) {
+                return null;
+            }
+
+            //Todo: move to uploaderListener
             //File may no exists
             try {
                 $this->fileStorage->removeFile($this->mapping->resolveFileName($fileDataFromForm['fileName']));
@@ -62,6 +87,6 @@ class FileDataTransformer implements DataTransformerInterface
             }
 
         }
-        return $fileDataFromForm['file'];
+        return isset($fileDataFromForm['file']) ? $fileDataFromForm['file'] : null;
     }
 }

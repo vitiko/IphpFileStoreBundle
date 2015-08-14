@@ -38,7 +38,7 @@ class FileDataTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $propertyMapping = Mocks::getPropertyMappingMock($this);
         $file = Mocks::getFileMock($this);
-        $this->transformer->setMapping($propertyMapping);
+        $this->transformer->setMapping($propertyMapping, FileDataTransformer::MODE_UPLOAD_FIELD);
 
 
         $propertyMapping->expects($this->once())
@@ -62,7 +62,7 @@ class FileDataTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $propertyMapping = Mocks::getPropertyMappingMock($this);
         $file = Mocks::getFileMock($this);
-        $this->transformer->setMapping($propertyMapping);
+        $this->transformer->setMapping($propertyMapping, FileDataTransformer::MODE_UPLOAD_FIELD);
 
         $this->fileStorage
             ->expects($this->never())

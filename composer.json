@@ -18,6 +18,8 @@
 
     "require-dev": {
 
+        "symfony/form": "@stable",
+        "symfony/twig-bundle": "@stable",
         "symfony/class-loader": "@stable",
         "symfony/finder": "@stable",
         "symfony/browser-kit": "@stable",

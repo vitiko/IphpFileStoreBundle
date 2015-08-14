@@ -185,6 +185,13 @@ class PropertyMappingFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($class)
             ->will($this->returnValue(null));
 
+        $this->driver
+            ->expects($this->once())
+            ->method('readUploadableFields')
+            ->with($class)
+            ->will($this->returnValue(array()));
+
+
         $factory = new PropertyMappingFactory($this->namerServiceInvoker, $this->driver, array());
         $mapping = $factory->getMappingFromField($obj, $class, 'oops');
 

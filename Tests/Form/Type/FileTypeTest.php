@@ -18,7 +18,7 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory  $propertyMappingfactory
+     * @var \Iphp\FileStoreBundle\Mapping\PropertyMappingFactory $propertyMappingfactory
      */
     protected $propertyMappingfactory;
 
@@ -38,7 +38,6 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
      * @var \Iphp\FileStoreBundle\Naming\NamerServiceInvoker
      */
     protected $namerServiceInvoker;
-
 
 
     /**
@@ -74,11 +73,11 @@ class FileTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(array(
-            'read_only' => false,
-            'upload' => true,
-            'show_uploaded' => true
-
-        ));
+                'read_only' => false,
+                'upload' => true,
+                'show_uploaded' => true,
+                'show_preview' => true
+            ));
 
         $this->fileType->setDefaultOptions($resolver);
     }

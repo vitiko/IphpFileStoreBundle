@@ -34,30 +34,28 @@ class AnnotationDriver
     /**
      * Attempts to read the uploadable annotation.
      *
-     * @param  \ReflectionClass                                $class The reflection class.
+     * @param  \ReflectionClass $class The reflection class.
      * @return null|\Iphp\FileStoreBundle\Annotation\Uploadable The annotation.
      */
-    public function readUploadable(\ReflectionClass $class )
+    public function readUploadable(\ReflectionClass $class)
     {
-        $baseClassName = $className= $class->getNamespaceName().'\\'.$class->getName();
+        $baseClassName = $className = $class->getNamespaceName() . '\\' . $class->getName();
         do {
-            if (isset($this->uploadedClass[$className]))
-            {
+            if (isset($this->uploadedClass[$className])) {
                 if ($baseClassName != $className)
-                    $this->uploadedClass[$baseClassName ] = $this->uploadedClass[$className];
+                    $this->uploadedClass[$baseClassName] = $this->uploadedClass[$className];
                 return $this->uploadedClass[$baseClassName];
             }
 
             $annotation = $this->reader->getClassAnnotation($class, 'Iphp\FileStoreBundle\Mapping\Annotation\Uploadable');
-            if ($annotation)
-            {
+            if ($annotation) {
                 $this->uploadedClass[$baseClassName] = $annotation;
                 if ($baseClassName != $className) $this->uploadedClass[$className] = $annotation;
 
                 return $annotation;
             }
             $class = $class->getParentClass();
-            if ($class) $className= $class->getNamespaceName().'\\'.$class->getName();
+            if ($class) $className = $class->getNamespaceName() . '\\' . $class->getName();
         } while ($class);
 
         return $annotation;
@@ -71,28 +69,26 @@ class AnnotationDriver
      */
     public function readUploadableFields(\ReflectionClass $class)
     {
-        if (isset($this->uploadedFields))
-
-        $fields = array();
+        $propertyAnnotations = array();
 
         foreach ($class->getProperties() as $prop) {
 
-            $field = $this->reader->getPropertyAnnotation($prop, 'Iphp\FileStoreBundle\Mapping\Annotation\UploadableField');
-            if (null !== $field) {
-                $field->setFileUploadPropertyName($prop->getName());
-                $fields[] = $field;
+            $propertyAnnotation = $this->reader->getPropertyAnnotation($prop, 'Iphp\FileStoreBundle\Mapping\Annotation\UploadableField');
+            if (null !== $propertyAnnotation) {
+                $propertyAnnotation->setFileUploadPropertyName($prop->getName());
+                $propertyAnnotations[] = $propertyAnnotation;
             }
         }
 
-        return $fields;
+        return $propertyAnnotations;
     }
 
     /**
      * Attempts to read the uploadable field annotation of the
      * specified property.
      *
-     * @param  \ReflectionClass                                     $class The class.
-     * @param  string                                               $field The field
+     * @param  \ReflectionClass $class The class.
+     * @param  string $field The field
      * @return null|\Iphp\FileStoreBundle\Annotation\UploadableField The uploadable field.
      */
     public function readUploadableField(\ReflectionClass $class, $field)

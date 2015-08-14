@@ -40,5 +40,5 @@ interface DataStorageInterface
     public function postFlush ($obj, EventArgs $args);
 
 
-    public function currentFieldData  ($fieldName, EventArgs $args);
+    public function previusFieldDataIfChanged ($fieldName, EventArgs $args);
 }

@@ -35,8 +35,8 @@ class PropertyMappingFactory
      * Constructs a new instance of PropertyMappingFactory.
      *
      * @param \Iphp\FileStoreBundle\Naming\NamerServiceInvoker $namerServiceInvoker Object for invoke rename methods.
-     * @param \Iphp\FileStoreBundle\Driver\AnnotationDriver              $driver    The driver.
-     * @param array                                                     $mappings  The configured mappings.
+     * @param \Iphp\FileStoreBundle\Driver\AnnotationDriver $driver The driver.
+     * @param array $mappings The configured mappings.
      */
     public function __construct(NamerServiceInvoker $namerServiceInvoker,
                                 AnnotationDriver $driver,
@@ -54,7 +54,7 @@ class PropertyMappingFactory
      * object.
      *
      * @param  object $obj The object.
-     * @param  \ReflectionClass      $class
+     * @param  \ReflectionClass $class
      * @return  \Iphp\FileStoreBundle\Mapping\PropertyMapping[] objects.
      */
     public function getMappingsFromObject($obj, \ReflectionClass $class)
@@ -74,18 +74,31 @@ class PropertyMappingFactory
      * Creates a property mapping object which contains the
      * configuration for the specified uploadable field.
      *
-     * @param  object               $obj   The object.
-     * @param  \ReflectionClass      $class
-     * @param  string               $field The field.
+     * @param  object $obj The object.
+     * @param  \ReflectionClass $class
+     * @param  string $field entity field name
+     * @param  bool $allFields search all fields (if upload field and file data field are separate)
      * @return null|\Iphp\FileStoreBundle\Mapping\PropertyMapping The property mapping.
      */
-    public function getMappingFromField($obj, \ReflectionClass $class, $field)
+    public function getMappingFromField($obj, \ReflectionClass $class, $field, $allFields = true)
     {
         if (!$this->hasAnnotations($class)) return null;
 
         $annotation = $this->driver->readUploadableField($class, $field);
 
+        if (!$annotation && $allFields) {
+            $propertyAnnotations= $this->driver->readUploadableFields($class);
 
+            foreach ($propertyAnnotations as $propertyAnnotation)
+            {
+                if ($propertyAnnotation->getFileDataPropertyName() == $field ||
+                    $propertyAnnotation->getFileUploadPropertyName() == $field)
+                {
+                    $annotation = $propertyAnnotation;
+                    break;
+                }
+            }
+        }
         if (null === $annotation) return null;
 
         return $this->createMapping($obj, $class, $annotation);
@@ -99,8 +112,8 @@ class PropertyMappingFactory
     /**
      * Creates the property mapping from the read annotation and configured mapping.
      *
-     * @param  object                                          $obj   The object.
-     * @param  \ReflectionClass      $class
+     * @param  object $obj The object.
+     * @param  \ReflectionClass $class
      * @param  \Iphp\FileStoreBundle\Mapping\Annotation\UploadableField $field The read annotation.
      * @return \Iphp\FileStoreBundle\Mapping\PropertyMapping     The property mapping.
      * @throws \InvalidArgumentException
@@ -124,7 +137,6 @@ class PropertyMappingFactory
 
         return $mapping;
     }
-
 
 
 }

@@ -63,7 +63,7 @@ class OrmDataStorage implements DataStorageInterface
     }
 
 
-    public function currentFieldData($fieldName, EventArgs $args)
+    public function previusFieldDataIfChanged($fieldName, EventArgs $args)
     {
         return $args->hasChangedField($fieldName) ? $args->getOldValue($fieldName) : null;
     }

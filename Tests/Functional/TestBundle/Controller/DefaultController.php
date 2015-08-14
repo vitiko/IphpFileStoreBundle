@@ -56,13 +56,14 @@ class DefaultController extends Controller
 
 
         if ($request->isMethod('POST')) {
-            $editForm->bind($request);
 
+            $editForm->bind($request);
+ 
             if ($editForm->isValid()) {
                 $em->persist($photo);
                 $em->flush();
                 return $this->redirect($this->generateUrl('photo_edit', array('id' => $photo->getId())));
-            }
+            } else print "\n\n" . $uploadForm->getErrorsAsString();
         }
 
         return $this->render('TestBundle:Photo:edit.html.twig', array(

@@ -1,49 +1,55 @@
 {% block iphp_file_widget %}
 
 
-    {% set fileData = value %}
     <div {{ block('widget_container_attributes') }}>
 
-        {% if upload  %}
-        {{ form_widget(form.file) }}
-        {% endif  %}
+        {% if form.file is defined %}
+            {{ form_widget(form.file) }}
+        {% endif %}
 
         {# if was upload error value is uploadedFile and originalName no exists#}
-        {% if fileData and fileData.originalName is defined %}
-            {% set fileUrl =  fileData.path  %}
+        {% if file_data and  file_data.originalName is defined %}
+            {% set fileUrl =   file_data.path %}
             {# |url_encode() #}
 
 
 
+            {%  block iphp_file_info  %}
             <table>
                 <tr>
-                    {% if fileData.width is defined %}
-                        <td><a href="{{ fileUrl }}" target="_blank" class="full-img-link"><img
-                                        src="{{ fileUrl }}" width="{{  fileData.width > 200 ? 200 : fileData.width }}" border="0"></a>
-                        </td>
-                        <td>&nbsp;&nbsp;&nbsp;</td>
+
+                    {% if show_preview %}
+                        {% if file_data.width is defined %}
+                            <td><a href="{{ fileUrl }}" target="_blank" class="full-img-link"><img
+                                            src="{{ fileUrl }}"
+                                            width="{{  file_data .width > 200 ? 200 :  file_data.width }}" border="0"></a>
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                        {% endif %}
                     {% endif %}
+
                     <td style="vertical-align: top;">
 
-                        <a href="{{ fileUrl }}" target="_blank" class="full-img-link">{{ fileData.fileName }}</a>
-                        <br>{{ fileData.size /1000}} Kb
-                        {{  fileData.width is defined ? ', ' ~ fileData.width ~ 'x' ~ fileData.height : ""}}
+                        <a href="{{ fileUrl }}" target="_blank" class="full-img-link">{{ file_data.fileName }}</a>
+                        <br>{{ file_data.size /1000 }} Kb
+                        {{ file_data.width is defined ? ', ' ~ file_data.width ~ 'x' ~ file_data.height : "" }}
 
-                        {% if fileData.originalName !=  fileData.fileName %}
-                            <br>{% trans %}Original file name{% endtrans %}: <b>{{ fileData.originalName }}</b>
+                        {% if file_data.originalName !=  file_data.fileName %}
+                            <br>{% trans %}Original file name{% endtrans %}: <b>{{ file_data.originalName }}</b>
                         {% endif %}
 
 
 
-                        {%  if upload %}
-                        <br><br>
-                        {{ form_row (form.delete, {'label_attr' : { 'style' :'width:auto;padding-right:10px'}})}}
-                        {%  endif %}
+                        {% if form.delete is defined %}
+                            <br><br>
+                            {{ form_row (form.delete, {'label_attr' : { 'style' :'width:auto;padding-right:10px' }})}}
+                        {% endif %}
 
                     </td>
 
                 </tr>
             </table>
+            {%  endblock iphp_file_info  %}
 
 
         {% endif %}
@@ -51,4 +57,4 @@
     </div>
 
 
-{% endblock iphp_file_widget%}
+{% endblock iphp_file_widget %}

@@ -134,7 +134,7 @@ class UploaderListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->dataStorage
             ->expects($this->any())
-            ->method('currentFieldData')
+            ->method('previusFieldDataIfChanged')
             ->with($propertyName, $args)
             ->will($this->returnValue($currentFieldData));
 

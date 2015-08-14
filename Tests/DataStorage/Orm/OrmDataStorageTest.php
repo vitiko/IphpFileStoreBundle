@@ -184,7 +184,7 @@ class OrmDataStorageTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnValue(array(1)));
 
             $storage = new OrmDataStorage();
-            $this->assertSame($storage->currentFieldData('file', $args), array(1));
+            $this->assertSame($storage->previusFieldDataIfChanged('file', $args), array(1));
         }
 
     }
