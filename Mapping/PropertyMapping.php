@@ -275,7 +275,7 @@ class PropertyMapping
      */
     public function getFileUploadPropertyName()
     {
-        return $this->fileUploadProperty->getName();
+        return   $this->fileUploadProperty->getName();
     }
 
     /**
@@ -314,6 +314,17 @@ class PropertyMapping
     {
         return $this->fileDataProperty->getName();
     }
+
+    /**
+     * Property for upload and property for file data is one property
+     * @return bool
+     */
+    public function isUseOneProperty()
+    {
+
+        return  $this->getFileDataPropertyName() ==  $this->getFileUploadPropertyName() ? true : false;
+    }
+
 
 
     /**

@@ -26,15 +26,15 @@ class RepairFileDataCommand extends ContainerAwareCommand
 
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+
+    protected function getPropertyMappingFactory()
     {
-        $entity = $input->getOption('entity');
-        $field = $input->getOption('field');
-        $force = $input->getOption('force') ? true : false;
+        return $this->getContainer()->get('iphp.filestore.mapping.factory');
+    }
 
-        $maxResults = $input->getOption('maxresults');
-        if (!$maxResults || !is_numeric($maxResults)) $maxResults = 1000;
 
+    protected function getWebDir(InputInterface $input)
+    {
         $webDir = $input->getOption('webdir');
 
         if (!$webDir && $this->getContainer()->has('iphp.web_dir'))
@@ -42,58 +42,87 @@ class RepairFileDataCommand extends ContainerAwareCommand
 
         if (!$webDir) $webDir = str_replace('\\', '/', realpath($this->getContainer()->getParameter('kernel.root_dir') . '/../web/'));
 
-        $propertyMappingFactory = $this->getContainer()->get('iphp.filestore.mapping.factory');
-
         if (!$webDir) throw new \InvalidArgumentException ('
          For resolving IphpFileStoreBundle uploaded files need to set --webdir option');
 
+        return $webDir;
+    }
 
-        list($bundle, $entity) = explode(':', $entity);
 
-        $repo = $this->getContainer()->get('doctrine')->getRepository($bundle . ":" . $entity);
-        $em = $this->getContainer()->get('doctrine')->getManager();
+    function getMaxResults(InputInterface $input)
+    {
+        $maxResults = $input->getOption('maxresults');
+        if (!$maxResults || !is_numeric($maxResults)) $maxResults = 1000;
 
-        $ids = $em->createQuery(
-            "SELECT e.id FROM " . $bundle . ":" . $entity . " e ORDER BY e.id ASC"
+        return $maxResults;
+    }
+
+
+    function getEntityManager()
+    {
+        return $this->getContainer()->get('doctrine')->getManager();
+    }
+
+    function getMappingFromField($entity, $field)
+    {
+        return $this->getPropertyMappingFactory()->getMappingFromField($entity, new \ReflectionClass($entity), $field);
+    }
+
+
+    function  getRepository($entityFullName)
+    {
+        return $this->getEntityManager()->getRepository($entityFullName);
+    }
+
+    function getEntityIds($entityFullName, $maxResults)
+    {
+        return $this->getEntityManager()->createQuery(
+            "SELECT e.id FROM " . $entityFullName . " e ORDER BY e.id ASC"
         )->setMaxResults($maxResults)->getArrayResult();
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $entityFullName = $input->getOption('entity');
+        $field = $input->getOption('field');
+        $force = $input->getOption('force') ? true : false;
+        $webDir = $this->getWebDir($input);
 
 
-        foreach ($ids as $pos => $e) {
+        foreach ($this->getEntityIds($entityFullName, $this->getMaxResults($input)) as $pos => $e) {
 
             $toFlush = false;
-            $entity = $repo->findOneById($e['id']);
+            $entity = $this->getRepository($entityFullName)->findOneById($e['id']);
             $fileData = $entity->{'get' . ucfirst($field)}();
 
             if (!$fileData) continue;
 
-            $fullFileNameByWebPath = $webDir . $fileData['path'];
-            $fullFileNameByWebPathExists = file_exists($fullFileNameByWebPath);
+            $fileNameByWebPath = $webDir . $fileData['path'];
+            $fileNameByWebPathExists = file_exists($fileNameByWebPath);
 
-            $propertyMapping = $propertyMappingFactory->getMappingFromField(
-                $entity, new \ReflectionClass($entity), $field);
-
-            $resolvedFileName = $propertyMapping->resolveFileName($fileData['fileName']);
+            $resolvedFileName = $this->getMappingFromField($entity, $field)->resolveFileName($fileData['fileName']);
             $resolvedFileNameExists = file_exists($resolvedFileName) ? 'exists' : 'NO';
 
-            if (!$fullFileNameByWebPathExists && !$resolvedFileNameExists) {
-                die ("can't find file ");
+            if (!$fileNameByWebPathExists && !$resolvedFileNameExists) {
+                $output->writeln("can't find file ");
+                continue;
             }
 
-            if ($fullFileNameByWebPathExists && $resolvedFileNameExists && !$force) continue;
+            if ($fileNameByWebPathExists && $resolvedFileNameExists && !$force) continue;
 
             //uploadedFile because need to move to new destination (not copy)
-            $file = new UploadedFile ($fullFileNameByWebPathExists ? $fullFileNameByWebPath : $resolvedFileNameExists,
+            $file = new UploadedFile ($fileNameByWebPathExists ? $fileNameByWebPath : $resolvedFileNameExists,
                 $fileData['originalName'], $fileData['mimeType'], null, null, true);
 
             $entity->{'set' . ucfirst($field)} ($file);
 
-            $em->persist($entity);
+            $this->getEntityManager()->persist($entity);
 
             $toFlush = true;
-            if ($pos % 20 == 0 && $toFlush) $em->flush();
-            if ($pos % 100 == 0) $em->clear();
+            if ($pos % 20 == 0 && $toFlush) $this->getEntityManager()->flush();
+            if ($pos % 100 == 0) $this->getEntityManager()->clear();
         }
 
-        $em->flush();
+        $this->getEntityManager()->flush();
     }
 }

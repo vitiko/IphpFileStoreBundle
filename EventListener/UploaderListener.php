@@ -166,90 +166,101 @@ class UploaderListener implements EventSubscriber
         $mappings = $this->getMappingsFromArgs($args);
 
         foreach ($mappings as $mapping) {
-
-            $uploadedFile = $mapping->getFileUploadPropertyValue();
-
-            //upload field and file data field are NOT SAME ($obj->file and $obj->uploadFile)
-            if ($mapping->getFileDataPropertyName() != $mapping->getFileUploadPropertyName()) {
-
-                $currentFileData = $mapping->getFileDataPropertyValue();
-                $previousFileData = $this->dataStorage->previusFieldDataIfChanged($mapping->getFileDataPropertyName(), $args);
-
-
-                $currentFileName = $previousFileData ? $mapping->resolveFileName($previousFileData['fileName']) : null;
-
-
-                //delete current file
-                if ($previousFileData && (
-                        // $obj->setFile (null)
-                        is_null($currentFileData) ||
-                        //$obj->setUploadFile (Iphp\File::createEmpty()->delete())
-                        $uploadedFile && $uploadedFile instanceof \Iphp\FileStoreBundle\File\File && $uploadedFile->isDeleted())
-                ) {
-                    if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
-                }
-
-                //upload new file
-                else if ($uploadedFile && $uploadedFile instanceof File) {
-
-                    //Old value (file) exists and uploaded new file
-                    if ($currentFileName  && !$this->fileStorage->isSameFile($uploadedFile, $currentFileName))
-                        //before upload new file delete old file
-                        $this->fileStorage->removeFile($currentFileName);
-
-                    $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
-                    $mapping->setFileDataPropertyValue($fileData);
-                }
-            }
-
-            // upload field and file data field are SAME ($obj->file)
-            else {
-
-                //use getOldValue from ORM
-                $currentFileData = $this->dataStorage->previusFieldDataIfChanged($mapping->getFileDataPropertyName(), $args);
-                $currentFileName = $currentFileData ? $mapping->resolveFileName($currentFileData['fileName']) : null;
-
-
-                //If no new file
-                if (is_null($uploadedFile) || !($uploadedFile instanceof File)) {
-
-                    if ($currentFileData) {
-                        if (!$this->fileStorage->fileExists($currentFileName)) {
-
-                            $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'] . $currentFileData['path'];
-
-                            if ($this->fileStorage->fileExists($fileNameByWebDir)) {
-                                $uploadedFile = new UploadedFile ($fileNameByWebDir,
-                                    $currentFileData['originalName'], $currentFileData['mimeType'],
-                                    null, null, true);
-                                $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
-                                $mapping->setFileDataPropertyValue($fileData);
-                            }
-
-                        } //Preserve old fileData if current file exist
-                        else $mapping->setFileDataPropertyValue($currentFileData);
-
-                    }
-
-
-                } //set new File and uploaded file has deleted status - remove file
-                else if ($uploadedFile instanceof \Iphp\FileStoreBundle\File\File && $uploadedFile->isDeleted()) {
-                    if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
-                } //set new file - upload new file
-                else {
-
-                    //Old value (file) exits and uploaded new file
-                    if ($currentFileData && !$this->fileStorage->isSameFile($uploadedFile, $currentFileName))
-                        //before upload new file delete old file
-                        $this->fileStorage->removeFile($currentFileName);
-
-                    $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
-                    $mapping->setFileDataPropertyValue($fileData);
-                }
-
-            }
+            if ($mapping->isUseOneProperty()) $this->updateUseOneProperties($args, $mapping);
+            else  $this->updateSeparateProperties($args, $mapping);
         }
         $this->dataStorage->recomputeChangeSet($args);
+    }
+
+
+    /**
+     * upload field and file data field are NOT SAME ($obj->file and $obj->uploadFile)
+     * @param EventArgs $args
+     * @param PropertyMapping $mapping
+     */
+    protected function updateUseOneProperties(\Doctrine\Common\EventArgs $args, PropertyMapping $mapping)
+    {
+        $uploadedFile = $mapping->getFileUploadPropertyValue();
+
+        //use getOldValue from ORM
+        $currentFileData = $this->dataStorage->previusFieldDataIfChanged($mapping->getFileDataPropertyName(), $args);
+        $currentFileName = $currentFileData ? $mapping->resolveFileName($currentFileData['fileName']) : null;
+
+
+        //If no new file
+        if (is_null($uploadedFile) || !($uploadedFile instanceof File)) {
+
+            if ($currentFileData) {
+                if (!$this->fileStorage->fileExists($currentFileName)) {
+
+                    $fileNameByWebDir = $_SERVER['DOCUMENT_ROOT'] . $currentFileData['path'];
+
+                    if ($this->fileStorage->fileExists($fileNameByWebDir)) {
+                        $uploadedFile = new UploadedFile ($fileNameByWebDir,
+                            $currentFileData['originalName'], $currentFileData['mimeType'],
+                            null, null, true);
+                        $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
+                        $mapping->setFileDataPropertyValue($fileData);
+                    }
+
+                } //Preserve old fileData if current file exist
+                else $mapping->setFileDataPropertyValue($currentFileData);
+
+            }
+
+
+        } //set new File and uploaded file has deleted status - remove file
+        else if ($uploadedFile instanceof \Iphp\FileStoreBundle\File\File && $uploadedFile->isDeleted()) {
+            if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
+        } //set new file - upload new file
+        else {
+
+            //Old value (file) exits and uploaded new file
+            if ($currentFileData && !$this->fileStorage->isSameFile($uploadedFile, $currentFileName))
+                //before upload new file delete old file
+                $this->fileStorage->removeFile($currentFileName);
+
+            $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
+            $mapping->setFileDataPropertyValue($fileData);
+        }
+
+    }
+
+
+    /**
+     * upload field and file data field are SAME ($obj->file)
+     * @param EventArgs $args
+     * @param PropertyMapping $mapping
+     */
+    protected function updateSeparateProperties(\Doctrine\Common\EventArgs $args, PropertyMapping $mapping)
+    {
+        $uploadedFile = $mapping->getFileUploadPropertyValue();
+        $currentFileData = $mapping->getFileDataPropertyValue();
+        $previousFileData = $this->dataStorage->previusFieldDataIfChanged($mapping->getFileDataPropertyName(), $args);
+
+
+        $currentFileName = $previousFileData ? $mapping->resolveFileName($previousFileData['fileName']) : null;
+
+
+        //delete current file
+        if ($previousFileData && (
+                // $obj->setFile (null)
+                is_null($currentFileData) ||
+                //$obj->setUploadFile (Iphp\File::createEmpty()->delete())
+                $uploadedFile && $uploadedFile instanceof \Iphp\FileStoreBundle\File\File && $uploadedFile->isDeleted())
+        ) {
+            if ($this->fileStorage->removeFile($currentFileName)) $mapping->setFileDataPropertyValue(null);
+        } //upload new file
+        else if ($uploadedFile && $uploadedFile instanceof File) {
+
+            //Old value (file) exists and uploaded new file
+            if ($currentFileName && !$this->fileStorage->isSameFile($uploadedFile, $currentFileName))
+                //before upload new file delete old file
+                $this->fileStorage->removeFile($currentFileName);
+
+            $fileData = $this->fileStorage->upload($mapping, $uploadedFile);
+            $mapping->setFileDataPropertyValue($fileData);
+        }
     }
 
 

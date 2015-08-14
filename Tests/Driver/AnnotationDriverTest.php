@@ -228,27 +228,7 @@ class AnnotationDriverTest extends \PHPUnit_Framework_TestCase
     }
 
 
-
-    /**
-     * Tests that the driver correctly reads one UploadableField
-     * property.
-     */
-    public function testReadUploadableFieldNoProperty()
-    {
-        $uploadableField = Mocks::getUploadableFieldMock($this);
-        $uploadableField->expects($this->never())->method('setPropertyName');
-
-        $entity = new DummyEntity();
-        $class = new \ReflectionClass($entity);
-
-        $reader = $this->getMock('Doctrine\Common\Annotations\Reader');
-        $reader->expects($this->never())->method('getPropertyAnnotation');
-
-        $driver = new AnnotationDriver($reader);
-        $this->assertEquals ($driver->readUploadableField($class, 'file2'), null);
-    }
-
-
+ 
 
 
     /**
