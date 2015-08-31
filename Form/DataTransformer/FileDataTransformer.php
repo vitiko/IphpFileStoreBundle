@@ -87,6 +87,8 @@ class FileDataTransformer implements DataTransformerInterface
             }
 
         }
-        return isset($fileDataFromForm['file']) ? $fileDataFromForm['file'] :   $fileDataFromForm;
+
+        return isset($fileDataFromForm['file']) ? $fileDataFromForm['file'] :
+            ($this->mode == self::MODE_UPLOAD_FIELD ? null : $fileDataFromForm);
     }
 }
