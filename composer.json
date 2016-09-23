@@ -13,12 +13,12 @@
     ],
 
     "require": {
-        "symfony/framework-bundle": "~2.3"
+        "symfony/framework-bundle": "~2.7"
     },
 
     "require-dev": {
-        "symfony/form": "~2.3",
-        "symfony/twig-bundle": "~2.3",
+        "symfony/form": "~2.7",
+        "symfony/twig-bundle": "~2.7",
 
         "symfony/class-loader": "@stable",
         "symfony/finder": "@stable",
