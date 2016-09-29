@@ -19,6 +19,7 @@ before_script:
     - cp .travis.composer.config.json ~/.composer/config.json
     - composer self-update
     - composer require symfony/asset:${SYMFONY_VERSION}
+    - composer require symfony/event-dispatcher:${SYMFONY_VERSION}
     - composer require symfony/form:${SYMFONY_VERSION}
     - composer require symfony/twig-bundle:${SYMFONY_VERSION}
     - composer require symfony/twig-bridge:${SYMFONY_VERSION}
