@@ -6,18 +6,14 @@ use Symfony\Component\Form\AbstractType;
 use Iphp\FileStoreBundle\FileStorage\FileStorageInterface;
 use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
 use Iphp\FileStoreBundle\Mapping\PropertyMappingFactory;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormFactoryInterface;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Exception\CreationException;
+
 use Symfony\Component\Form\FormView;
 
 
-use Symfony\Component\Form\ReversedTransformer;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
@@ -52,6 +48,16 @@ class FileType extends AbstractType
         $this->mappingFactory = $mappingFactory;
         $this->dataStorage = $dataStorage;
         $this->fileStorage = $fileStorage;
+    }
+
+    public function configureOptions (OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'read_only' => false,
+            'upload' => true,
+            'show_uploaded' => true,
+            'show_preview' => true
+        ));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -90,6 +96,12 @@ class FileType extends AbstractType
         //    ->addViewTransformer(new FileDataViewTransformer());
     }
 
+    //for using iphp_file_widget from Resources/views/Form/fields.html.twig
+    public function getBlockPrefix()
+    {
+        return 'iphp_file';
+    }
+
 
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
@@ -100,21 +112,7 @@ class FileType extends AbstractType
 
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'form';
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'iphp_file';
-    }
 }
 
 

@@ -42,7 +42,8 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
 
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::PRE_SUBMIT => 'preBind',
+        return array(
+            FormEvents::PRE_SUBMIT => 'preBind',
             FormEvents::PRE_SET_DATA => 'preSet');
     }
 
@@ -53,55 +54,39 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
         $propertyName = $form->getName();
 
         $obj = $form->getParent()->getData();
-        //For oneToMany at SonataAdmin
 
         if (!$obj) return;
 
         $mapping = $this->mappingFactory->getMappingFromField($obj,
             $this->dataStorage->getReflectionClass($obj),
-            $propertyName );
+            $propertyName);
 
-
-        if ($mapping)
-        {
-
-            if ($propertyName  == $mapping->getFileUploadPropertyName())
-            $form->add('file', 'file', array('required' => false));
+        if ($mapping) {
+            if ($propertyName == $mapping->getFileUploadPropertyName())
+                $form->add('file', 'file', array('required' => false));
 
             if ($propertyName == $mapping->getFileDataPropertyName())
-            $form->add('delete', 'checkbox', array('required' => false));
-
-            //);
+                $form->add('delete', 'checkbox', array('required' => false));
         }
-
-        /*  $form->add('file', 'file', array('required' => false))
-              ->add('delete', 'checkbox', array('required' => false));*/
     }
 
     public function preBind(FormEvent $event)
     {
-
         $form = $event->getForm();
         $propertyName = $form->getName();
         $obj = $form->getParent()->getData();
 
-
-        //For oneToMany at SonataAdmin
         if (!$obj) return;
 
         $mapping = $this->mappingFactory->getMappingFromField($obj,
             $this->dataStorage->getReflectionClass($obj),
-            $propertyName );
-
+            $propertyName);
 
         if ($mapping) {
-    /*        $form->add('file', 'file', array('required' => false))
-                ->add('delete', 'checkbox', array('required' => false));*/
-
             $this->transformer->setMapping($mapping,
-                $mapping->getFileUploadPropertyName() == $propertyName  ?
-                    FileDataTransformer::MODE_UPLOAD_FIELD :  FileDataTransformer::MODE_FILEDATA_FIELD
-               );
+                $mapping->getFileUploadPropertyName() == $propertyName ?
+                    FileDataTransformer::MODE_UPLOAD_FIELD : FileDataTransformer::MODE_FILEDATA_FIELD
+            );
         }
     }
 

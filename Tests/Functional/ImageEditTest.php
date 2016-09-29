@@ -44,7 +44,7 @@ class ImageEditTest extends BaseTestCase
 
         $crawler = $client->request('GET', '/edit/' . $photoLoaded->getId() . '/');
         unset($photoLoaded);
-
+ 
         $this->assertSame($crawler->filter('input[id="form_title"][value="Second photo"]')->count(), 1);
         $this->assertSame($crawler->filter('option[value="2013"][selected="selected"]')->count(), 1);
         $this->assertSame($crawler->filter('option[value="4"][selected="selected"]')->count(), 1);
