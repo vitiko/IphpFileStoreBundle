@@ -44,6 +44,20 @@ class Photo
     private $photo;
 
     /**
+     * Only for upload
+     * @Assert\Image( maxSize="20M")
+     * @FileStore\UploadableField(mapping="photo", fileDataProperty="photoInfo")
+     **/
+    private $photoUpload;
+
+
+    /**
+     * Only for store file info in db
+     * @ORM\Column(type="array")
+     **/
+    private $photoInfo;
+
+    /**
      * @return integer
      */
     public function getId()
@@ -103,4 +117,38 @@ class Photo
     {
         return $this->date;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPhotoUpload()
+    {
+        return $this->photoUpload;
+    }
+
+    /**
+     * @param mixed $photoUpload
+     */
+    public function setPhotoUpload($photoUpload)
+    {
+        $this->photoUpload = $photoUpload;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPhotoInfo()
+    {
+        return $this->photoInfo;
+    }
+
+    /**
+     * @param mixed $photoInfo
+     */
+    public function setPhotoInfo($photoInfo)
+    {
+        $this->photoInfo = $photoInfo;
+    }
+
+
 }

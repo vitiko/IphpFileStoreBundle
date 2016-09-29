@@ -28,6 +28,7 @@ class DefaultController extends Controller
             ->add('date', DateType::class)
             //Using standart field type
             ->add('photo', FileType::class)
+            ->add('photoUpload', FileType::class)
             ->getForm();
 
         $uploadForm->handleRequest($request);
@@ -57,6 +58,10 @@ class DefaultController extends Controller
             ->add('date', DateType::class)
             //Using  field type with showing file/image info
             ->add('photo', IphpFileType::class)
+
+            ->add('photoUpload', FileType::class)
+            ->add('photoInfo', IphpFileType::class)
+
             ->getForm();
 
 

@@ -366,11 +366,5 @@ class PropertyMapping
         return $dir . (substr($dir,-1) != '/'  &&  substr($fileName,0,1) != '/' ? '/' : ''). $fileName;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
+
 }
