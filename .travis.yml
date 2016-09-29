@@ -24,6 +24,7 @@ before_script:
     - composer require symfony/templating:${SYMFONY_VERSION}
     - composer require symfony/doctrine-bridge:${SYMFONY_VERSION}
     - composer require symfony/framework-bundle:${SYMFONY_VERSION}
+    - composer require symfony/asset:${SYMFONY_VERSION}
     - composer install --dev
 
 notifications:
