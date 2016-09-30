@@ -97,6 +97,8 @@ has a few required options. They are as follows:
 
 Lets look at an example using a fictional `Photo` ORM entity:
 
+
+
 ``` php
 <?php
 #src/Iphpsandbox/PhotoBundle/Entity/Photo.php
@@ -110,55 +112,38 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Photo
 {
     /**
-     * @var integer
+     * @var int
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
- 
-    /**
-     * @var string
+    
+   /**
+     * @var array
+     * @ORM\Column(name="photo", type="array", nullable=true)
      */
-    private $title;
- 
- 
-    /**
-     * @var \Datetime
-     */
-    private $date;
- 
-    /**
-     * @Assert\File( maxSize="20M")
-     * @FileStore\UploadableField(mapping="photo")
-     **/
     private $photo;
- 
+
+    /**
+     * @var File
+     * @Assert\File( maxSize="20M")
+     * @FileStore\UploadableField(mapping="photo", fileDataProperty ="photo")
+     */
+    private $uploadPhoto;
+
     ...
      /* Getters and setters */
     ...
 }
 ```
 
+
+
 [Source code of Photo entity in test bundle](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Entity/Photo.php)
 
-### Doctrine configuration
-
-Field with file data must have type=array. Example of xml doctrine configuration. Annotation configuration above.
-
-``` xml
-<?xml version="1.0" encoding="utf-8"?>
-<!-- src/Iphpsandbox/PhotoBundle/Ressources/config/doctrine/Photo.orm.xml -->
-<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
-                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-    <entity name="Iphpsandbox\PhotoBundle\Entity\Photo">
-        <id name="id" type="integer" column="id">
-            <generator strategy="AUTO"/>
-        </id>
-        <field name="title" type="string" column="title" length="255"/>
-        <field name="date" type="datetime" column="date"/>
-        <field name="photo" type="array" column="photo"/>
-   </entity>
-</doctrine-mapping>
-```
+ 
+Field with file data must have type=array. 
 
 
 ## Uploaded file data
