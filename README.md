@@ -270,7 +270,7 @@ For example we want show preview of original uploaded image,  preview generated 
 
 When customizing the form field block in Twig, you have two options on where the customized form block can live:
 
-### Method 1: Customize one form
+### Method 1: Form theming
 
 The easiest way to customize the `iphp_file_widget` block is to customize it directly in the template that's actually rendering the form.
 
