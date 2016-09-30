@@ -123,16 +123,16 @@ class Photo
     
    /**
      * @var array
-     * @ORM\Column(name="photo", type="array", nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
-    private $photo;
+    private $photoInfo;
 
     /**
      * @var File
      * @Assert\File( maxSize="20M")
-     * @FileStore\UploadableField(mapping="photo", fileDataProperty ="photo")
+     * @FileStore\UploadableField(mapping="photo", fileDataProperty ="photoInfo")
      */
-    private $uploadPhoto;
+    private $photoUpload;
 
     ...
      /* Getters and setters */
