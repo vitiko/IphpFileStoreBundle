@@ -287,11 +287,29 @@ The easiest way to customize the `iphp_file_widget` block is to customize it dir
      <div>{{ file_data.width ~ 'x' ~ file_data.height }} </div>
 {% endblock iphp_file_widget_image_preview %}
 ```
-
-### Method 2: Inside a separate Template¶
-You can also choose to put the customized integer_widget form block in a separate template entirely. The code and end-result are the same, but you can now re-use the form customization across many templates:
-
 more info about form customization here http://symfony.com/doc/current/form/form_customization.html#form-theming
+
+### Method 2: Override bundle template
+
+To override the bundle template, just copy the field.html.twig template from the vendor/iphp/filestore-bundle/Iphp/FileStoreBundle/Resources/views/Form/fields.html.twig  to app/Resources/IphpFileStoreBundle/views/Form/fields.html.twig (the app/Resources/IphpFileStoreBundle directory won't exist, so you'll need to create it). You're now free to customize the template.
+
+for example, for display preview in all forms
+``` twig
+{#app/Resources/IphpFileStoreBundle/views/Form/fields.html.twig#}
+{% extends 'IphpFileStoreBundle:Form:fields-base.html.twig' %}
+
+{% block iphp_file_widget_image_preview %}
+    <div style="float: left" class="iphp_file_widget_image_preview">
+        <a href="{{ fileUrl }}" target="_blank">
+         <img src="{{ fileUrl | imagine_filter('photo_thumb') }}">
+        </a>
+    </div>
+
+    <div>{{ file_data.width ~ 'x' ~ file_data.height }} </div>
+{% endblock iphp_file_widget_image_preview %}
+```
+
+more info about overriding templates from third-party bundle here http://symfony.com/doc/current/templating/overriding.html
 
 
 ## Namers
