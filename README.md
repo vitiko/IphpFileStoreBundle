@@ -97,11 +97,12 @@ has a few required options. They are as follows:
 
 Lets look at an example using a fictional `Photo` ORM entity:
 
+#### recommended use case - upload in one field (uploadPhoto), store file data in another field (photo)
 
 
 ``` php
 <?php
-#src/Iphpsandbox/PhotoBundle/Entity/Photo.php
+
 namespace Iphpsandbox\PhotoBundle\Entity;
 use Iphp\FileStoreBundle\Mapping\Annotation as FileStore;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -138,7 +139,41 @@ class Photo
 }
 ```
 
+#### deprecated use case - upload and store file data in one field (photo)
 
+``` php
+<?php
+
+namespace Iphpsandbox\PhotoBundle\Entity;
+use Iphp\FileStoreBundle\Mapping\Annotation as FileStore;
+use Symfony\Component\Validator\Constraints as Assert;
+ 
+/**
+ * @FileStore\Uploadable
+ */
+class Photo
+{
+    /**
+     * @var int
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+    
+    /**
+     * @var File
+     * @Assert\File( maxSize="20M")
+     * @FileStore\UploadableField(mapping="photo")
+     * @ORM\Column(type="array", nullable=true)
+     */
+    private $photo;
+
+    ...
+     /* Getters and setters */
+    ...
+}
+```
 
 [Source code of Photo entity in test bundle](https://github.com/vitiko/IphpFileStoreBundle/blob/master/Tests/Functional/TestBundle/Entity/Photo.php)
 
