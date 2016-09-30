@@ -261,6 +261,17 @@ class PhotoAdmin extends Admin
 }
 ```
 
+## Customizing form field 
+
+When customizing the form field block in Twig, you have two options on where the customized form block can live:
+
+### Method 1: Inside the same Template as the Form
+
+The easiest way to customize the integer_widget block is to customize it directly in the template that's actually rendering the form.
+
+### Method 2: Inside a separate Template¶
+You can also choose to put the customized integer_widget form block in a separate template entirely. The code and end-result are the same, but you can now re-use the form customization across many templates:
+
 
 ###Example of sonata admin form for uploaded photo
 ![Example of edit form for uploaded photo](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/sonata-admin-iphpfile.jpeg)
