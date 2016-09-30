@@ -93,6 +93,7 @@ is submitted with the `UploadableField` annotation. The `UploadableField` annota
 has a few required options. They are as follows:
 
 - `mapping`: The mapping specified in the bundle configuration to use
+- `fileDataProperty`: name of field, where are stored file data  
  
 
 Lets look at an example using a fictional `Photo` ORM entity:
@@ -182,8 +183,7 @@ Field with file data must have type=array.
 
 
 ## Uploaded file data
- 
-### Annotated field data
+
 
 Аfter file upload annotated field contains array with elements:
 
@@ -206,13 +206,7 @@ If uploaded file im image, array also contains:
 To get a path for the file you can use this PHP code:
 
 ``` php
-// PHP 5.3
 $photo = ... // load entity from db
- 
-$photoData = $photo->getPhoto(); //array with image data
-$path = $photoData['path'];
- 
-//Or PHP 5.4.
 $path = $photo->getPhoto()['path'];
 ```
 
