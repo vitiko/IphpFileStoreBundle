@@ -263,11 +263,23 @@ class PhotoAdmin extends Admin
 
 ## Customizing form field 
 
+For example we want show preview of original uploaded image,  preview generated with LiipImagineBundle https://github.com/liip/LiipImagineBundle. For change `<img src="..">` of preview we need to modify original form field template wich defined in https://github.com/vitiko/IphpFileStoreBundle/blob/master/Resources/views/Form/fields.html.twig.
+
 When customizing the form field block in Twig, you have two options on where the customized form block can live:
 
-### Method 1: Inside the same Template as the Form
+### Method 1: Customize one form
 
-The easiest way to customize the integer_widget block is to customize it directly in the template that's actually rendering the form.
+The easiest way to customize the `iphp_file_widget` block is to customize it directly in the template that's actually rendering the form.
+
+{% form_theme form _self %}
+
+{% block iphp_file_widget_image_preview %}
+     <div style="float: left" class="iphp_file_widget_image_preview">
+        <a href="{{ fileUrl }}" target="_blank"><img src="{{ fileUrl | imagine_filter('photo_thumb') }}"></a>
+     </div>
+
+     <div>{{ file_data.width ~ 'x' ~ file_data.height }} </div>
+{% endblock iphp_file_widget_image_preview %}
 
 ### Method 2: Inside a separate Template¶
 You can also choose to put the customized integer_widget form block in a separate template entirely. The code and end-result are the same, but you can now re-use the form customization across many templates:
@@ -276,7 +288,7 @@ You can also choose to put the customized integer_widget form block in a separat
 ###Example of sonata admin form for uploaded photo
 ![Example of edit form for uploaded photo](https://raw.github.com/vitiko/IphpFileStoreBundle/master/Tests/Fixtures/images/sonata-admin-iphpfile.jpeg)
 
-
+more info about form customization here http://symfony.com/doc/current/form/form_customization.html#form-theming
 
 
 ## Namers
