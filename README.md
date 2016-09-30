@@ -271,6 +271,7 @@ When customizing the form field block in Twig, you have two options on where the
 
 The easiest way to customize the `iphp_file_widget` block is to customize it directly in the template that's actually rendering the form.
 
+``` twig
 {% form_theme form _self %}
 
 {% block iphp_file_widget_image_preview %}
@@ -280,6 +281,7 @@ The easiest way to customize the `iphp_file_widget` block is to customize it dir
 
      <div>{{ file_data.width ~ 'x' ~ file_data.height }} </div>
 {% endblock iphp_file_widget_image_preview %}
+```
 
 ### Method 2: Inside a separate Template¶
 You can also choose to put the customized integer_widget form block in a separate template entirely. The code and end-result are the same, but you can now re-use the form customization across many templates:
