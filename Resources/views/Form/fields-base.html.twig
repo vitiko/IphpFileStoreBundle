@@ -1,0 +1,74 @@
+{% block iphp_file_widget %}
+
+
+    <div {{ block('widget_container_attributes') }}>
+
+        {% if form.file is defined %}
+            {{ form_widget(form.file) }}
+        {% endif %}
+
+        {# if was upload error value is uploadedFile and originalName no exists#}
+        {% if file_data and  file_data.originalName is defined %}
+            {% set fileUrl =   file_data.path %}
+
+            {% if show_preview and file_data.width is defined %}
+                {% block iphp_file_widget_image_preview %}
+
+                    <div style="float: left" class="iphp_file_widget_image_preview">
+                        <a href="{{ fileUrl }}" target="_blank"><img
+                                    src="{{ fileUrl }}"
+                                    width="{{ file_data .width > 200 ? 200 :  file_data.width }}" border="0"></a>
+                    </div>
+
+                    <div>{{ file_data.width ~ 'x' ~ file_data.height }} </div>
+                {% endblock iphp_file_widget_image_preview %}
+            {% endif %}
+
+
+
+            {% block iphp_file_widget_file_info %}
+                <div>
+
+                    {% block iphp_file_widget_file_link %}
+                        <div>
+                            <a href="{{ fileUrl }}" target="_blank" class="full-img-link">{{ file_data.fileName }}</a>
+                        </div>
+                    {% endblock iphp_file_widget_file_link %}
+
+                    {% block iphp_file_widget_file_attrs %}
+                        <div>{{ file_data.size /1000 }} Kb</div>
+
+                        {% if file_data.originalName !=  file_data.fileName %}
+                            <div>
+                                {% trans %}Original file name{% endtrans %}:
+                                <strong>{{ file_data.originalName }}</strong>
+                            </div>
+                        {% endif %}
+                    {% endblock iphp_file_widget_file_attrs %}
+
+
+                    {% if form.delete is defined %}
+                        {% block iphp_file_widget_file_delete %}
+                            <div>
+                                {{ form_row (form.delete, {'label_attr' : { 'style' :'width:auto;padding-right:10px' }}) }}
+                            </div>
+                        {% endblock iphp_file_widget_file_delete %}
+                    {% endif %}
+
+                </div>
+            {% endblock iphp_file_widget_file_info %}
+
+
+
+
+        {% endif %}
+
+
+        {% block iphp_file_widget_end %}
+            <div style="clear: both"></div>
+        {% endblock iphp_file_widget_end %}
+
+    </div>
+
+
+{% endblock iphp_file_widget %}
