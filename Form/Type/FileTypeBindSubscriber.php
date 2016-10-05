@@ -4,8 +4,6 @@ namespace Iphp\FileStoreBundle\Form\Type;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Iphp\FileStoreBundle\DataStorage\DataStorageInterface;
 use Iphp\FileStoreBundle\Form\DataTransformer\FileDataTransformer;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Iphp\FileStoreBundle\Mapping\PropertyMappingFactory;
@@ -65,10 +63,10 @@ class FileTypeBindSubscriber implements EventSubscriberInterface
 
         if ($mapping) {
             if ($propertyName == $mapping->getFileUploadPropertyName())
-                $form->add('file', FileType::class, array('required' => false));
+                $form->add('file', \Symfony\Component\Form\Extension\Core\Type\FileType::class, ['required' => false]);
 
             if ($propertyName == $mapping->getFileDataPropertyName())
-                $form->add('delete', CheckboxType::class, array('required' => false));
+                $form->add('delete', \Symfony\Component\Form\Extension\Core\Type\CheckboxType::class, ['required' => false]);
         }
     }
 
